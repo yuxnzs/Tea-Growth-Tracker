@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA34CD312C1E04AA00B4BBD5 /* TeaDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA34CD302C1E04AA00B4BBD5 /* TeaDetail.swift */; };
+		CA34CD332C1E075A00B4BBD5 /* TeaInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA34CD322C1E075A00B4BBD5 /* TeaInfo.swift */; };
 		CA68792B2C1DDD38007866DA /* TeaGrowthTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA68792A2C1DDD38007866DA /* TeaGrowthTrackerApp.swift */; };
 		CA68792D2C1DDD38007866DA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA68792C2C1DDD38007866DA /* ContentView.swift */; };
 		CA68792F2C1DDD3B007866DA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA68792E2C1DDD3B007866DA /* Assets.xcassets */; };
@@ -14,6 +16,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CA34CD302C1E04AA00B4BBD5 /* TeaDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaDetail.swift; sourceTree = "<group>"; };
+		CA34CD322C1E075A00B4BBD5 /* TeaInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaInfo.swift; sourceTree = "<group>"; };
 		CA6879272C1DDD38007866DA /* TeaGrowthTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeaGrowthTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA68792A2C1DDD38007866DA /* TeaGrowthTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaGrowthTrackerApp.swift; sourceTree = "<group>"; };
 		CA68792C2C1DDD38007866DA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -55,6 +59,8 @@
 				CA68792C2C1DDD38007866DA /* ContentView.swift */,
 				CA68792E2C1DDD3B007866DA /* Assets.xcassets */,
 				CA6879302C1DDD3B007866DA /* Preview Content */,
+				CA34CD302C1E04AA00B4BBD5 /* TeaDetail.swift */,
+				CA34CD322C1E075A00B4BBD5 /* TeaInfo.swift */,
 			);
 			path = TeaGrowthTracker;
 			sourceTree = "<group>";
@@ -137,7 +143,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA34CD312C1E04AA00B4BBD5 /* TeaDetail.swift in Sources */,
 				CA68792D2C1DDD38007866DA /* ContentView.swift in Sources */,
+				CA34CD332C1E075A00B4BBD5 /* TeaInfo.swift in Sources */,
 				CA68792B2C1DDD38007866DA /* TeaGrowthTrackerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
