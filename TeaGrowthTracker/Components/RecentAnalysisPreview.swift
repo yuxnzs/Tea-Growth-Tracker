@@ -1,14 +1,30 @@
 import SwiftUI
 
 struct RecentAnalysisPreview: View {
+    @EnvironmentObject var teaData: TeaData
+    
     var body: some View {
         ZStack(alignment: .bottom) {
-            Image("tea-test")
-                .resizable()
-                .scaledToFill()
-                .frame(maxWidth: .infinity)
-                .frame(height: 150)
+            // 茶園圖片
+            VStack {
+                AsyncImage(url: URL(string: teaData.originalImage)) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                } placeholder: {
+                    ProgressView()
+                }
+            }
+            // 給 VStack 預設高度，在圖片還在載入時不會因為整個 VStack 沒有高度
+            // 導致下方日期 VStack 在中間，沒被撐到最下面，跟 ProgressView 疊在一起
             
+            // 這裡設定 maxWidth: .infinity 跟 maxWidth: 210 會有所不同，不知道為什麼
+            // 照理來說父視圖設定 width: 210 後，子視圖設定 maxWidth: .infinity 應該也是 210
+            // 但結果 maxWidth: .infinity 與 maxWidth: 210 不同，會影響下方 VStack 的寬度與圖片寬度一樣，而不是跟父視圖一樣
+            // 目前推測是因為圖片過寬導致意想不到的佈局效果
+            .frame(maxWidth: 210, maxHeight: .infinity)
+            
+            // 日期
             VStack {
                 HStack {
                     Image(systemName: "calendar")
@@ -17,7 +33,7 @@ struct RecentAnalysisPreview: View {
                         .frame(width: 20, height: 20)
                         .foregroundStyle(.white)
                     
-                    Text("2024 / 06 / 01")
+                    Text(teaData.date)
                         .font(.title3)
                         .fontWeight(.bold)
                         .foregroundStyle(.white)
@@ -38,4 +54,15 @@ struct RecentAnalysisPreview: View {
 #Preview(traits: .sizeThatFitsLayout) {
     RecentAnalysisPreview()
         .padding()
+        .environmentObject(TeaData(
+            teaGardenID: 1,
+            name: "龍井茶園",
+            location: "新北市石碇區",
+            originalImage: "https://images.unsplash.com/photo-1605105777592-c3430a67d033?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            analyzedImage: "tea-test",
+            date: "2024-06-01",
+            weather: "雨",
+            growth: "90 %",
+            waterFlow: "下"
+        ))
 }

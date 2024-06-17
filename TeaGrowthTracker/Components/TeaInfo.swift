@@ -3,15 +3,15 @@ import SwiftUI
 struct TeaInfo: View {
     let title: String
     let date: String?
-    let weather: String?
+    let weatherIcon: String?
     let weatherColor: Color?
     let growth: String?
     let waterFlow: String?
     
-    init(title: String, date: String? = nil, weather: String? = nil, weatherColor: Color? = nil, growth: String? = nil, waterFlow: String? = nil) {
+    init(title: String, date: String? = nil, weatherIcon: String? = nil, weatherColor: Color? = nil, growth: String? = nil, waterFlow: String? = nil) {
         self.title = title
         self.date = date
-        self.weather = weather
+        self.weatherIcon = weatherIcon
         self.weatherColor = weatherColor
         self.growth = growth
         self.waterFlow = waterFlow
@@ -34,12 +34,12 @@ struct TeaInfo: View {
                         .fontWeight(.bold)
                 }
                 
-                if let weather = weather, let weatherColor = weatherColor {
-                    Image(systemName: weather)
+                if let weatherIcon = weatherIcon, let weatherColor = weatherColor {
+                    Image(systemName: weatherIcon)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 80, height: 80)
-                        .foregroundColor(weatherColor)
+                        .foregroundStyle(weatherColor)
                 }
                 
                 if let growth = growth {
@@ -65,9 +65,9 @@ struct TeaInfo: View {
 
 #Preview(traits: .sizeThatFitsLayout) {
     TeaInfo(title: "生長情形",
-//            date: "2021-09-01",
-            weather: "cloud.sun",
-            weatherColor: .yellow
+            date: "2021-09-01"
+//            weather: "cloud.sun",
+//            weatherColor: .yellow
 //            growth: "95 %",
 //            waterFlow: "上流"
     )
