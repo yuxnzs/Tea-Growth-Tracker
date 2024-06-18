@@ -5,7 +5,13 @@ struct ContentView: View {
     // 剛開啟 App 時取得後端資料，取得完畢再顯示
     @State var isLoading: Bool = true
     
+    // 控制 Alert 顯示
     @State private var showAlert: Bool = false
+    
+    // 控制 Sheet 顯示
+    @State private var isAnalysisViewPresented: Bool = false
+    // 傳遞被點擊的歷史分析結果
+    @State var selectedTeaData: TeaModel? = nil
     
     var body: some View {
         NavigationStack {
@@ -18,7 +24,7 @@ struct ContentView: View {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle())
                                 .scaleEffect(1.5)
-                            .padding(.top, 100)
+                                .padding(.top, 100)
                             
                             Text("載入中...")
                                 .font(.title)
@@ -28,7 +34,7 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                     } else {
                         // 取得最近一次資料
-                        if let latestTeaData = teaService.teaData.last {
+                        if let latestTeaData = teaService.teaModel.last {
                             ScrollView {
                                 VStack(spacing: 35) {
                                     // 頂部資訊欄
@@ -69,7 +75,6 @@ struct ContentView: View {
                                                 Spacer()
                                             }
                                         }
-                                        
                                         // 茶圖標
                                         VStack {
                                             Image("leaf")
@@ -93,25 +98,29 @@ struct ContentView: View {
                                     
                                     // 最近一次分析結果
                                     VStack {
-                                        HStack {
-                                            Text("最近一次分析結果")
-                                                .font(.system(size: 25))
-                                                .fontWeight(.bold)
-                                            
-                                            Spacer()
-                                            
-                                            Image(systemName: "arrow.right")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 20, height: 20)
-                                                .foregroundStyle(.gray)
-                                                .onTapGesture {
-                                                    
-                                                }
+                                        NavigationLink {
+                                            AnalysisView()
+                                                .environmentObject(latestTeaData)
+                                        } label: {
+                                            HStack {
+                                                Text("最近一次分析結果")
+                                                    .font(.system(size: 25))
+                                                    .fontWeight(.bold)
+                                                
+                                                Spacer()
+                                                
+                                                Image(systemName: "arrow.right")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 20, height: 20)
+                                                    .foregroundStyle(.gray)
+                                            }
                                         }
                                         .padding(.horizontal, 20)
+                                        // 去除 NavigationLink label 內的藍色
+                                        .buttonStyle(.plain)
                                         
-                                        TeaAnalysis()
+                                        DataGrid()
                                             .environmentObject(latestTeaData)
                                     }
                                     
@@ -129,9 +138,6 @@ struct ContentView: View {
                                                 .scaledToFit()
                                                 .frame(width: 20, height: 20)
                                                 .foregroundStyle(.gray)
-                                                .onTapGesture {
-                                                    
-                                                }
                                         }
                                         .padding(.horizontal, 20)
                                         
@@ -140,13 +146,23 @@ struct ContentView: View {
                                                 ForEach(0..<3) { index in
                                                     RecentAnalysisPreview()
                                                         .padding(.trailing, 15)
-                                                        // 傳 teaData 的前三項分析資料給 RecentAnalysisPreview 顯示
-                                                        .environmentObject(teaService.teaData[index])
+                                                    // 傳 teaData 的前三項分析資料給 RecentAnalysisPreview 顯示
+                                                        .environmentObject(teaService.teaModel[index])
+                                                        .onTapGesture {
+                                                            selectedTeaData = teaService.teaModel[index]
+                                                        }
+                                                    // 使用 isPresented 來控制 sheet 顯示
+                                                    // 會因為狀態同步問題導致顯示錯誤的數據
+                                                    // 所以改用 item，因為 item 綁定的是具體的數據物件
+                                                    // item 有值時顯示
+                                                        .sheet(item: $selectedTeaData) { teaData in
+                                                            AnalysisView(isSheet: true)
+                                                                .environmentObject(teaData)
+                                                        }
                                                 }
                                             }
                                             .padding(.leading, 20)
                                         }
-                                        
                                     }
                                 }
                             }
@@ -160,19 +176,20 @@ struct ContentView: View {
                             .ignoresSafeArea()
                     }
                 }
+                .onAppear {
+                    Task {
+                        await fetchTeaInfo()
+                    }
+                }
+                // 警告提示
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("錯誤"),
+                          message: Text("伺服器錯誤，請稍後再試。"),
+                          dismissButton: .default(Text("OK"))
+                    )
+                }
+                
             }
-        }
-        .onAppear {
-            Task {
-                await fetchTeaInfo()
-            }
-        }
-        // 警告提示
-        .alert(isPresented: $showAlert) {
-            Alert(title: Text("錯誤"),
-                  message: Text("伺服器錯誤，請稍後再試。"),
-                  dismissButton: .default(Text("OK"))
-            )
         }
     }
     
