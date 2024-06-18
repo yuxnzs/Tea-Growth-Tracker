@@ -13,18 +13,19 @@ struct TeaGarden: Codable {
 }
 
 class TeaService: ObservableObject {
-    @Published var teaData: [TeaData] = []
+    @Published var teaModel: [TeaModel] = []
     
     // 如果沒有給參數，預設為空陣列
-    init(teaData: [TeaData] = []) {
-        self.teaData = teaData
+    init(teaModel: [TeaModel] = []) {
+        self.teaModel = teaModel
     }
     
     private let baseURL: String = ""
     private let path: String = "/tea"
+    private let id: String = "/1"
     
     func fetchTeaData() async throws {
-        guard let url = URL(string: "\(baseURL)\(path)") else {
+        guard let url = URL(string: "\(baseURL)\(path)\(id)") else {
             throw URLError(.badURL)
         }
         
@@ -35,8 +36,8 @@ class TeaService: ObservableObject {
         // UI 更新必須在主執行緒上進行
         // 在主執行緒中更新 @Published 屬性
         DispatchQueue.main.async {
-            self.teaData = teaGardens.map { garden in
-                TeaData(
+            self.teaModel = teaGardens.map { garden in
+                TeaModel(
                     teaGardenID: garden.teaGardenID,
                     name: garden.teaGardenName,
                     location: garden.teaGardenLocation,
