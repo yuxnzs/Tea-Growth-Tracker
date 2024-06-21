@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct RecentAnalysisPreview: View {
-    @EnvironmentObject var teaModel: TeaModel
+    let teaData: TeaData
     
     var body: some View {
         ZStack(alignment: .bottom) {
             // 茶園圖片
             VStack {
-                AsyncImage(url: URL(string: teaModel.originalImage)) { image in
+                AsyncImage(url: URL(string: teaData.originalImage)) { image in
                     image
                         .resizable()
                         .scaledToFill()
@@ -33,7 +33,7 @@ struct RecentAnalysisPreview: View {
                         .frame(width: 20, height: 20)
                         .foregroundStyle(.white)
                     
-                    Text(teaModel.date)
+                    Text(teaData.date)
                         .font(.title3)
                         .fontWeight(.bold)
                         .foregroundStyle(.white)
@@ -52,17 +52,14 @@ struct RecentAnalysisPreview: View {
 }
 
 #Preview(traits: .sizeThatFitsLayout) {
-    RecentAnalysisPreview()
-        .padding()
-        .environmentObject(TeaModel(
-            teaGardenID: 1,
-            name: "龍井茶園",
-            location: "新北市石碇區",
+    RecentAnalysisPreview(
+        teaData: TeaData(
+            area: "A",
             originalImage: "https://images.unsplash.com/photo-1605105777592-c3430a67d033?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            analyzedImage: "tea-test",
+            analyzedImage: "https://images.unsplash.com/photo-1605105777592-c3430a67d033?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             date: "2024-06-01",
             weather: "雨",
-            growth: "90 %",
+            growth: "90%",
             waterFlow: "下"
         ))
 }

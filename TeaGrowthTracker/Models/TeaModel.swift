@@ -1,10 +1,23 @@
 import SwiftUI
 
-class TeaModel: Identifiable, ObservableObject {
+class Tea: Identifiable, ObservableObject {
     let id = UUID()
     let teaGardenID: Int
     let name: String
     let location: String
+    let teaData: [TeaData]
+    
+    init(teaGardenID: Int, name: String, location: String, teaData: [TeaData]) {
+        self.teaGardenID = teaGardenID
+        self.name = name
+        self.location = location
+        self.teaData = teaData
+    }
+}
+
+class TeaData: Identifiable {
+    let id: UUID = UUID()
+    let area: String
     let originalImage: String
     let analyzedImage: String
     let date: String
@@ -12,10 +25,8 @@ class TeaModel: Identifiable, ObservableObject {
     let growth: String
     let waterFlow: String
     
-    init(teaGardenID: Int, name: String, location: String, originalImage: String, analyzedImage: String, date: String, weather: String, growth: String, waterFlow: String) {
-        self.teaGardenID = teaGardenID
-        self.name = name
-        self.location = location
+    init(area: String, originalImage: String, analyzedImage: String, date: String, weather: String, growth: String, waterFlow: String) {
+        self.area = area
         self.originalImage = originalImage
         self.analyzedImage = analyzedImage
         self.date = date

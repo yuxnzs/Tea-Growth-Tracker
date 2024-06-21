@@ -4,6 +4,11 @@ struct TeaGarden: Codable {
     let teaGardenID: Int
     let teaGardenName: String
     let teaGardenLocation: String
+    let teaData: [TeaDecodeData]
+}
+
+struct TeaDecodeData: Codable {
+    let area: String
     let originalImage: String
     let analyzedImage: String
     let date: String
@@ -13,11 +18,11 @@ struct TeaGarden: Codable {
 }
 
 class TeaService: ObservableObject {
-    @Published var teaModel: [TeaModel] = []
+    @Published var teaGardenData: [Tea] = []
     
     // 如果沒有給參數，預設為空陣列
-    init(teaModel: [TeaModel] = []) {
-        self.teaModel = teaModel
+    init(teaGardenData: [Tea] = []) {
+        self.teaGardenData = teaGardenData
     }
     
     private let baseURL: String = ""
@@ -36,17 +41,22 @@ class TeaService: ObservableObject {
         // UI 更新必須在主執行緒上進行
         // 在主執行緒中更新 @Published 屬性
         DispatchQueue.main.async {
-            self.teaModel = teaGardens.map { garden in
-                TeaModel(
+            self.teaGardenData = teaGardens.map { garden in
+                Tea(
                     teaGardenID: garden.teaGardenID,
                     name: garden.teaGardenName,
                     location: garden.teaGardenLocation,
-                    originalImage: garden.originalImage,
-                    analyzedImage: garden.analyzedImage,
-                    date: garden.date,
-                    weather: garden.weather,
-                    growth: garden.growth,
-                    waterFlow: garden.waterFlow
+                    teaData: garden.teaData.map { decodeData in
+                        TeaData(
+                            area: decodeData.area,
+                            originalImage: decodeData.originalImage,
+                            analyzedImage: decodeData.analyzedImage,
+                            date: decodeData.date,
+                            weather: decodeData.weather,
+                            growth: decodeData.growth,
+                            waterFlow: decodeData.waterFlow
+                        )
+                    }
                 )
             }
         }

@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct AnalysisView: View {
-    @EnvironmentObject var teaModel: TeaModel
-    
     @State private var selectedIndex = 0 // 追蹤目前圖片選中的 index
     
+    let teaData: TeaData
     var isSheet: Bool
     
-    init(isSheet: Bool = false) {
+    init(teaData: TeaData, isSheet: Bool = false) {
+        self.teaData = teaData
         self.isSheet = isSheet
     }
     
@@ -18,9 +18,9 @@ struct AnalysisView: View {
                     ForEach(0..<2) { index in
                         VStack {
                             if index == 0 {
-                                AnalysisImage(imageUrl: teaModel.originalImage, index: index, width: geometry.size.width)
+                                AnalysisImage(imageUrl: teaData.originalImage, index: index, width: geometry.size.width)
                             } else if index == 1 {
-                                AnalysisImage(imageUrl: teaModel.analyzedImage, index: index, width: geometry.size.width)
+                                AnalysisImage(imageUrl: teaData.analyzedImage, index: index, width: geometry.size.width)
                             }
                         }
                         // 手機螢幕的寬度
@@ -53,30 +53,27 @@ struct AnalysisView: View {
         
         // 從 Sheet 過來位置會長得不一樣，所以需特別處理
         VStack(alignment: .leading) {
-            Text("分析結果")
+            Text("\(teaData.area) 區分析結果")
                 .font(.system(size: 25))
                 .fontWeight(.bold)
                 .padding(.leading, 20)
             
-            DataGrid()
-                .environmentObject(teaModel)
+            DataGrid(teaData: teaData)
         }
         .padding(.bottom, isSheet ? -20 : UIScreen.main.bounds.height / 20)
-          
+        
     }
 }
 
 #Preview {
-    AnalysisView()
-        .environmentObject(TeaModel(
-            teaGardenID: 1,
-            name: "龍井茶園",
-            location: "新北市石碇區",
+    AnalysisView(
+        teaData: TeaData(
+            area: "A",
             originalImage: "https://images.unsplash.com/photo-1605105777592-c3430a67d033?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             analyzedImage: "https://images.unsplash.com/photo-1605105777592-c3430a67d033?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             date: "2024-06-01",
             weather: "雨",
-            growth: "90 %",
+            growth: "90%",
             waterFlow: "下"
         ))
 }

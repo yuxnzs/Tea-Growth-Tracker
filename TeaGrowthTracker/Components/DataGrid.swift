@@ -1,24 +1,24 @@
 import SwiftUI
 
 struct DataGrid: View {
-    @EnvironmentObject var teaModel: TeaModel
+    let teaData: TeaData
     
     var body: some View {
         VStack(spacing: 20) {
             HStack(spacing: 20) {
-                DataCard(title: "日期", date: teaModel.date)
+                DataCard(title: "日期", date: teaData.date)
                 
-                let (weatherIcon, weatherColor) = getWeatherIconAndColor(weather: teaModel.weather)
+                let (weatherIcon, weatherColor) = getWeatherIconAndColor(weather: teaData.weather)
                 DataCard(title: "天氣",
-                        weatherIcon: weatherIcon,
-                        weatherColor: weatherColor)
+                         weatherIcon: weatherIcon,
+                         weatherColor: weatherColor)
             }
             .frame(maxWidth: .infinity)
             
             HStack(spacing: 20) {
-                DataCard(title: "生長情形", growth: teaModel.growth)
+                DataCard(title: "生長情形", growth: teaData.growth)
                 
-                DataCard(title: "水流方向", waterFlow: teaModel.waterFlow)
+                DataCard(title: "水流方向", waterFlow: teaData.waterFlow)
             }
             .frame(maxWidth: .infinity)
         }
@@ -40,17 +40,16 @@ struct DataGrid: View {
 }
 
 #Preview {
-    DataGrid()
-        .environmentObject(TeaModel(
-            teaGardenID: 1,
-            name: "龍井茶園",
-            location: "新北市石碇區",
+    DataGrid(
+        teaData: TeaData(
+            area: "A",
             originalImage: "https://images.unsplash.com/photo-1605105777592-c3430a67d033?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             analyzedImage: "https://images.unsplash.com/photo-1605105777592-c3430a67d033?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             date: "2024-06-01",
             weather: "雨",
-            growth: "90 %",
+            growth: "90%",
             waterFlow: "下"
-        ))
+        )
+    )
 }
 

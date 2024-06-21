@@ -11,7 +11,7 @@ struct ContentView: View {
     // 控制 Sheet 顯示
     @State private var isAnalysisViewPresented: Bool = false
     // 傳遞被點擊的歷史分析結果
-    @State var selectedTeaData: TeaModel? = nil
+    @State var selectedTeaData: TeaData? = nil
     
     var body: some View {
         NavigationStack {
@@ -24,17 +24,16 @@ struct ContentView: View {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle())
                                 .scaleEffect(1.5)
-                                .padding(.top, 100)
                             
                             Text("載入中...")
                                 .font(.title)
                                 .fontWeight(.bold)
                                 .padding(.top, 25)
                         }
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
                         // 取得最近一次資料
-                        if let latestTeaData = teaService.teaModel.last {
+                        if let latestTeaData = teaService.teaGardenData.last?.teaData.first {
                             ScrollView {
                                 VStack(spacing: 35) {
                                     // 頂部資訊欄
@@ -50,7 +49,7 @@ struct ContentView: View {
                                                     .foregroundStyle(.white)
                                                     .padding(.trailing, 3)
                                                 
-                                                Text(latestTeaData.name)
+                                                Text(teaService.teaGardenData.last!.name)
                                                     .font(.title)
                                                     .fontWeight(.bold)
                                                     .foregroundStyle(.white)
@@ -67,7 +66,7 @@ struct ContentView: View {
                                                     .foregroundStyle(.white)
                                                     .padding(.trailing, 3)
                                                 
-                                                Text(latestTeaData.location)
+                                                Text(teaService.teaGardenData.last!.location)
                                                     .font(.title2)
                                                     .fontWeight(.bold)
                                                     .foregroundStyle(.white)
@@ -99,8 +98,7 @@ struct ContentView: View {
                                     // 最近一次分析結果
                                     VStack {
                                         NavigationLink {
-                                            AnalysisView()
-                                                .environmentObject(latestTeaData)
+                                            AnalysisView(teaData: latestTeaData)
                                         } label: {
                                             HStack {
                                                 Text("最近一次分析結果")
@@ -120,44 +118,51 @@ struct ContentView: View {
                                         // 去除 NavigationLink label 內的藍色
                                         .buttonStyle(.plain)
                                         
-                                        DataGrid()
-                                            .environmentObject(latestTeaData)
+                                        DataGrid(teaData: latestTeaData)
                                     }
-                                    
+
                                     // 歷史分析結果
                                     VStack {
-                                        HStack {
-                                            Text("歷史分析結果")
-                                                .font(.system(size: 25))
-                                                .fontWeight(.bold)
-                                            
-                                            Spacer()
-                                            
-                                            Image(systemName: "arrow.right")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 20, height: 20)
-                                                .foregroundStyle(.gray)
+                                        NavigationLink {
+                                            AreaListView()
+                                                .environmentObject(teaService)
+                                        } label: {
+                                            HStack {
+                                                Text("歷史分析結果")
+                                                    .font(.system(size: 25))
+                                                    .fontWeight(.bold)
+                                                
+                                                Spacer()
+                                                
+                                                Image(systemName: "arrow.right")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 20, height: 20)
+                                                    .foregroundStyle(.gray)
+                                            }
                                         }
                                         .padding(.horizontal, 20)
+                                        .buttonStyle(.plain)
                                         
                                         ScrollView(.horizontal, showsIndicators: false) {
                                             HStack {
-                                                ForEach(0..<3) { index in
-                                                    RecentAnalysisPreview()
+                                                // teaService.teaModel 是一個陣列，所以要用 flatMap 來取得一個元素
+                                                // 再透過該元素取得 teaData 陣列
+                                                // teaService.teaModel.compactMap 的 $0 為一個 TeaModel 物件
+                                                // first 取得 A 區
+                                                ForEach(teaService.teaGardenData.compactMap { $0.teaData.prefix(3).first }.reversed()) { teaData in
+                                                    RecentAnalysisPreview(teaData: teaData)
                                                         .padding(.trailing, 15)
                                                     // 傳 teaData 的前三項分析資料給 RecentAnalysisPreview 顯示
-                                                        .environmentObject(teaService.teaModel[index])
                                                         .onTapGesture {
-                                                            selectedTeaData = teaService.teaModel[index]
+                                                            selectedTeaData = teaData
                                                         }
                                                     // 使用 isPresented 來控制 sheet 顯示
                                                     // 會因為狀態同步問題導致顯示錯誤的數據
                                                     // 所以改用 item，因為 item 綁定的是具體的數據物件
                                                     // item 有值時顯示
                                                         .sheet(item: $selectedTeaData) { teaData in
-                                                            AnalysisView(isSheet: true)
-                                                                .environmentObject(teaData)
+                                                            AnalysisView(teaData: teaData, isSheet: true)
                                                         }
                                                 }
                                             }
