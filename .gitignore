@@ -1,0 +1,7 @@
+# Ignore user-specific Xcode settings
+xcuserdata/
+*.xcuserstate
+
+# macOS
+.DS_Store
+*.pem
