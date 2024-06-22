@@ -42,12 +42,13 @@ struct ContentView: View {
                                         VStack(spacing: 20) {
                                             // 茶園名稱
                                             HStack {
-                                                Image(systemName: "mappin.and.ellipse")
+                                                Image("pin")
                                                     .resizable()
                                                     .scaledToFit()
                                                     .frame(width: 30, height: 30)
                                                     .foregroundStyle(.white)
                                                     .padding(.trailing, 3)
+                                                    .padding(.leading, -3)
                                                 
                                                 Text(teaService.teaGardenData.last!.name)
                                                     .font(.title)
@@ -59,7 +60,7 @@ struct ContentView: View {
                                             
                                             // 茶園位置
                                             HStack {
-                                                Image(systemName: "location")
+                                                Image(systemName: "location.fill")
                                                     .resizable()
                                                     .scaledToFit()
                                                     .frame(width: 20, height: 20)
@@ -119,7 +120,8 @@ struct ContentView: View {
                                         .buttonStyle(.plain)
                                         
                                         DataGrid(teaData: latestTeaData)
-                                    }
+                                            .padding(.horizontal, 10)
+                                    }       
 
                                     // 歷史分析結果
                                     VStack {
