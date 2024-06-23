@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA086F4B2C27340200F59DE2 /* FullImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA086F4A2C27340100F59DE2 /* FullImageView.swift */; };
 		CA34CD312C1E04AA00B4BBD5 /* DataGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA34CD302C1E04AA00B4BBD5 /* DataGrid.swift */; };
 		CA34CD332C1E075A00B4BBD5 /* DataCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA34CD322C1E075A00B4BBD5 /* DataCard.swift */; };
 		CA40967F2C247F1600CC4AAD /* AreaListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA40967E2C247F1600CC4AAD /* AreaListView.swift */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CA086F4A2C27340100F59DE2 /* FullImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullImageView.swift; sourceTree = "<group>"; };
 		CA34CD302C1E04AA00B4BBD5 /* DataGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataGrid.swift; sourceTree = "<group>"; };
 		CA34CD322C1E075A00B4BBD5 /* DataCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCard.swift; sourceTree = "<group>"; };
 		CA40967E2C247F1600CC4AAD /* AreaListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreaListView.swift; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 			children = (
 				CA4AC5CB2C218FCC0096D81B /* AnalysisView.swift */,
 				CA40967E2C247F1600CC4AAD /* AreaListView.swift */,
+				CA086F4A2C27340100F59DE2 /* FullImageView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -197,6 +200,7 @@
 				CA40967F2C247F1600CC4AAD /* AreaListView.swift in Sources */,
 				CA34CD312C1E04AA00B4BBD5 /* DataGrid.swift in Sources */,
 				CAA9305C2C1EFFFA005BF058 /* RecentAnalysisPreview.swift in Sources */,
+				CA086F4B2C27340200F59DE2 /* FullImageView.swift in Sources */,
 				CA448A142C2033140065EFE1 /* TeaModel.swift in Sources */,
 				CA4AC5CC2C218FCC0096D81B /* AnalysisView.swift in Sources */,
 				CA68792D2C1DDD38007866DA /* ContentView.swift in Sources */,
@@ -261,7 +265,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -318,7 +322,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

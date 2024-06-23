@@ -63,7 +63,7 @@ struct DataCard: View {
     }
 }
 
-#Preview(traits: .sizeThatFitsLayout) {
+#Preview() {
     DataCard(title: "生長情形",
             date: "2021-09-01"
 //            weather: "cloud.sun",

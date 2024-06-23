@@ -51,7 +51,7 @@ struct RecentAnalysisPreview: View {
     }
 }
 
-#Preview(traits: .sizeThatFitsLayout) {
+#Preview() {
     RecentAnalysisPreview(
         teaData: TeaData(
             area: "A",
