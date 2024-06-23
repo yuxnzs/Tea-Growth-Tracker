@@ -15,8 +15,8 @@ struct AnalysisImage: View {
                 // 顯示右下角的頁數 Indicator
                 .overlay(
                     indexIndicator(index: index)
-                        .padding([.bottom, .trailing], 10),
-                    alignment: .bottomTrailing
+                        .padding([.bottom, .leading], 10),
+                    alignment: .bottomLeading
                 )
         } placeholder: {
             ProgressView()
@@ -27,7 +27,7 @@ struct AnalysisImage: View {
     
     private func indexIndicator(index: Int) -> some View {
         Text("\(index + 1) / 2")
-            .font(.callout)
+            .font(.system(size: 13, weight: .bold))
             .foregroundStyle(.white)
             .padding(8)
             .background(Color.black.opacity(0.7))
