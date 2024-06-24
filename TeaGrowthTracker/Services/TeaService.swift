@@ -18,16 +18,23 @@ struct TeaDecodeData: Codable {
 }
 
 class TeaService: ObservableObject {
-    @Published var teaGardenData: [Tea] = []
+    @Published var teaGardenData: [Tea]
     
-    // 如果沒有給參數，預設為空陣列
-    init(teaGardenData: [Tea] = []) {
-        self.teaGardenData = teaGardenData
-    }
+    @AppStorage("selectedToggle") var selectedToggle: Int = 1
     
     private let baseURL: String = ""
     private let path: String = "/tea"
-    private let id: String = "/1"
+    
+    // 在 init 中使用 self.selectedToggle 前，必須先初始化所有 Stored Property
+    // 因此需先初始化 id 為空字串
+    var id: String = ""
+    
+    // 為了讓一些 View 中的 Preview 可以使用，所以需要提供帶有可以傳入假資料參數的 init
+    // 如果沒有給參數，預設為空陣列
+    init(teaGardenData: [Tea] = []) {
+        self.teaGardenData = teaGardenData
+        self.id = "/\(self.selectedToggle)" // 每次開啟 App 時根據上次 selectedToggle 的值更新 id
+    }
     
     func fetchTeaData() async throws {
         guard let url = URL(string: "\(baseURL)\(path)\(id)") else {

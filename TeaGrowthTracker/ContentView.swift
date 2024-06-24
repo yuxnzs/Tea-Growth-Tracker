@@ -10,6 +10,10 @@ struct ContentView: View {
     
     // 控制 Sheet 顯示
     @State private var isAnalysisViewPresented: Bool = false
+    @State private var isToggleSearchViewPresented: Bool = false
+    
+    @State private var needsRefreshData = false
+    
     // 傳遞被點擊的歷史分析結果
     @State var selectedTeaData: TeaData? = nil
     
@@ -35,7 +39,7 @@ struct ContentView: View {
                         // 取得最近一次資料
                         if let latestTeaData = teaService.teaGardenData.last?.teaData.first {
                             ScrollView {
-                                VStack(spacing: 35) {
+                                VStack(spacing: 25) {
                                     // 頂部資訊欄
                                     HStack {
                                         // 文字資訊
@@ -82,6 +86,17 @@ struct ContentView: View {
                                                 .scaledToFit()
                                                 .frame(width: 65, height: 65)
                                         }
+                                        .onTapGesture {
+                                            isToggleSearchViewPresented.toggle()
+                                        }
+                                        .sheet(isPresented: $isToggleSearchViewPresented, onDismiss: {
+                                            // 關閉時，獲取新的 id 資料
+                                            needsRefreshData = true
+                                        }) {
+                                            TeaGardenSelectorView()
+                                                .environmentObject(teaService)
+                                                .presentationDetents([.fraction(0.4)])
+                                        }
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(.top, 20)
@@ -121,8 +136,8 @@ struct ContentView: View {
                                         
                                         DataGrid(teaData: latestTeaData)
                                             .padding(.horizontal, 10)
-                                    }       
-
+                                    }
+                                    
                                     // 歷史分析結果
                                     VStack {
                                         NavigationLink {
@@ -186,6 +201,16 @@ struct ContentView: View {
                 .onAppear {
                     Task {
                         await fetchTeaInfo()
+                    }
+                }
+                // 從 sheet 中的 ToggleSearchView 返回時觸發
+                .onChange(of: needsRefreshData) { newValue in
+                    if newValue {
+                        // 更新資料
+                        Task {
+                            await fetchTeaInfo()
+                            needsRefreshData = false
+                        }
                     }
                 }
                 // 警告提示
