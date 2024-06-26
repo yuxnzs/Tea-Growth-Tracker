@@ -8,7 +8,7 @@ struct TeaGardenSelectorView: View {
             List {
                 TeaGardenToggle(toggleId: 1, teaGardenName: "龍井茶園")
                 TeaGardenToggle(toggleId: 2, teaGardenName: "香茗茶園")
-                TeaGardenToggle(toggleId: 3, teaGardenName: "綠山茶圓")
+                TeaGardenToggle(toggleId: 3, teaGardenName: "綠山茶園")
             }
             .environmentObject(teaService)
             .navigationTitle("切換茶園")

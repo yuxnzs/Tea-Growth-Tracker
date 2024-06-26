@@ -60,6 +60,6 @@ struct RecentAnalysisPreview: View {
             date: "2024-06-01",
             weather: "雨",
             growth: "90%",
-            waterFlow: "下"
+            plantingRate: "高"
         ))
 }

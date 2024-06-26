@@ -16,9 +16,9 @@ struct DataGrid: View {
             .frame(maxWidth: .infinity)
             
             HStack(spacing: 20) {
-                DataCard(title: "生長情形", growth: teaData.growth)
+                DataCard(title: "生長率參考值", growth: teaData.growth)
                 
-                DataCard(title: "水流方向", waterFlow: teaData.waterFlow)
+                DataCard(title: "種植程度", plantingRate: teaData.plantingRate)
             }
             .frame(maxWidth: .infinity)
         }
@@ -48,7 +48,7 @@ struct DataGrid: View {
             date: "2024-06-01",
             weather: "雨",
             growth: "90%",
-            waterFlow: "下"
+            plantingRate: "高"
         )
     )
 }

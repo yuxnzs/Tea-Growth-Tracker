@@ -43,7 +43,7 @@ struct AreaListView: View {
                             date: "2024-06-01",
                             weather: "雨",
                             growth: "90%",
-                            waterFlow: "下"
+                            plantingRate: "高"
                         ),
                         TeaData(
                             area: "B",
@@ -52,7 +52,7 @@ struct AreaListView: View {
                             date: "2024-06-01",
                             weather: "雨",
                             growth: "90%",
-                            waterFlow: "下"
+                            plantingRate: "中"
                         ),
                         TeaData(
                             area: "C",
@@ -61,7 +61,7 @@ struct AreaListView: View {
                             date: "2024-06-01",
                             weather: "晴",
                             growth: "90%",
-                            waterFlow: "下"
+                            plantingRate: "低"
                         )
                     ]
                 ),
@@ -77,7 +77,7 @@ struct AreaListView: View {
                             date: "2024-06-10",
                             weather: "雨",
                             growth: "90%",
-                            waterFlow: "下"
+                            plantingRate: "高"
                         ),
                         TeaData(
                             area: "B",
@@ -86,7 +86,7 @@ struct AreaListView: View {
                             date: "2024-06-10",
                             weather: "雨",
                             growth: "90%",
-                            waterFlow: "下"
+                            plantingRate: "高"
                         ),
                         TeaData(
                             area: "C",
@@ -95,7 +95,7 @@ struct AreaListView: View {
                             date: "2024-06-10",
                             weather: "晴",
                             growth: "90%",
-                            waterFlow: "下"
+                            plantingRate: "中"
                         )
                     ]
                 )

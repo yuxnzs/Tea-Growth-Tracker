@@ -6,27 +6,29 @@ struct DataCard: View {
     let weatherIcon: String?
     let weatherColor: Color?
     let growth: String?
-    let waterFlow: String?
+    let plantingRate: String?
     
-    init(title: String, date: String? = nil, weatherIcon: String? = nil, weatherColor: Color? = nil, growth: String? = nil, waterFlow: String? = nil) {
+    init(title: String, date: String? = nil, weatherIcon: String? = nil, weatherColor: Color? = nil, growth: String? = nil, plantingRate: String? = nil) {
         self.title = title
         self.date = date
         self.weatherIcon = weatherIcon
         self.weatherColor = weatherColor
         self.growth = growth
-        self.waterFlow = waterFlow
+        self.plantingRate = plantingRate
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            // 欄位名稱
             VStack {
                 Text(title)
                     .font(.title3)
                     .fontWeight(.bold)
             }
-            .padding(.top, 10)
-            .padding(.horizontal, 12)
+            .padding(.top, 13)
+            .padding(.horizontal, 13)
             
+            // 資料
             VStack {
                 if let date = date {
                     Text(date)
@@ -48,8 +50,8 @@ struct DataCard: View {
                         .fontWeight(.bold)
                 }
                 
-                if let waterFlow = waterFlow {
-                    Text(waterFlow)
+                if let plantingRate = plantingRate {
+                    Text(plantingRate)
                         .font(.title)
                         .fontWeight(.bold)
                 }
@@ -64,12 +66,12 @@ struct DataCard: View {
 }
 
 #Preview() {
-    DataCard(title: "生長情形",
-            date: "2021-09-01"
+    DataCard(title: "生長率參考值",
+//            date: "2021-09-01"
 //            weather: "cloud.sun",
 //            weatherColor: .yellow
-//            growth: "95 %",
-//            waterFlow: "上流"
+            growth: "95 %"
+//            plantingRate: "高"
     )
     .padding()
 }

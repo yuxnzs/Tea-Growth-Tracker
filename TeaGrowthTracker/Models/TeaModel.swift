@@ -23,15 +23,15 @@ class TeaData: Identifiable {
     let date: String
     let weather: String
     let growth: String
-    let waterFlow: String
+    let plantingRate: String
     
-    init(area: String, originalImage: String, analyzedImage: String, date: String, weather: String, growth: String, waterFlow: String) {
+    init(area: String, originalImage: String, analyzedImage: String, date: String, weather: String, growth: String, plantingRate: String) {
         self.area = area
         self.originalImage = originalImage
         self.analyzedImage = analyzedImage
         self.date = date
         self.weather = weather
         self.growth = growth
-        self.waterFlow = waterFlow
+        self.plantingRate = plantingRate
     }
 }

@@ -14,7 +14,7 @@ struct TeaDecodeData: Codable {
     let date: String
     let weather: String
     let growth: String
-    let waterFlow: String
+    let plantingRate: String
 }
 
 class TeaService: ObservableObject {
@@ -61,7 +61,7 @@ class TeaService: ObservableObject {
                             date: decodeData.date,
                             weather: decodeData.weather,
                             growth: decodeData.growth,
-                            waterFlow: decodeData.waterFlow
+                            plantingRate: decodeData.plantingRate
                         )
                     }
                 )
