@@ -3,12 +3,14 @@ import SwiftUI
 struct TeaGardenSelectorView: View {
     @EnvironmentObject var teaService: TeaService
     
+    let teaGardens: [String] = ["龍井茶園", "香茗茶園", "綠山茶園", "翠嶺茶園"]
+    
     var body: some View {
         NavigationStack {
             List {
-                TeaGardenToggle(toggleId: 1, teaGardenName: "龍井茶園")
-                TeaGardenToggle(toggleId: 2, teaGardenName: "香茗茶園")
-                TeaGardenToggle(toggleId: 3, teaGardenName: "綠山茶園")
+                ForEach(Array(teaGardens.enumerated()), id: \.element) { index, teaGarden in
+                    TeaGardenToggle(toggleId: index + 1, teaGardenName: teaGarden)
+                }
             }
             .environmentObject(teaService)
             .navigationTitle("切換茶園")

@@ -4,7 +4,13 @@ struct TeaGarden: Codable {
     let teaGardenID: Int
     let teaGardenName: String
     let teaGardenLocation: String
+    let aiPlantingImages: ImagePair?
     let teaData: [TeaDecodeData]
+}
+
+struct ImagePair: Codable {
+    let original: String
+    let marked: String
 }
 
 struct TeaDecodeData: Codable {
@@ -53,6 +59,12 @@ class TeaService: ObservableObject {
                     teaGardenID: garden.teaGardenID,
                     name: garden.teaGardenName,
                     location: garden.teaGardenLocation,
+                    aiPlantingImages: garden.aiPlantingImages.map { imagePair in
+                        AiPlantingImages(
+                            original: imagePair.original,
+                            marked: imagePair.marked
+                        )
+                    },
                     teaData: garden.teaData.map { decodeData in
                         TeaData(
                             area: decodeData.area,

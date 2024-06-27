@@ -3,13 +3,14 @@ import SwiftUI
 struct AnalysisImage: View {
     let imageUrl: String
     let index: Int
-    let width: CGFloat
+    let width: CGFloat // 手機螢幕寬度
     
     var body: some View {
         AsyncImage(url: URL(string: imageUrl)) { image in
             image
                 .resizable()
                 .scaledToFill()
+                .scaleEffect(1.04) // 避免照片有白邊
                 .frame(width: width, height: 350)
                 .clipped()
                 // 顯示右下角的頁數 Indicator
@@ -20,7 +21,7 @@ struct AnalysisImage: View {
                 )
         } placeholder: {
             ProgressView()
-                // 載入時會與圖片大小一樣，不會導致有不一致情形
+                // 載入時會與圖片大小一樣，不會導致載入時大小有不一致情形
                 .frame(width: width, height: 350)
         }
     }

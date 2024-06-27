@@ -95,7 +95,7 @@ struct ContentView: View {
                                         }) {
                                             TeaGardenSelectorView()
                                                 .environmentObject(teaService)
-                                                .presentationDetents([.fraction(0.4)])
+                                                .presentationDetents([.fraction(0.5)])
                                         }
                                     }
                                     .frame(maxWidth: .infinity)

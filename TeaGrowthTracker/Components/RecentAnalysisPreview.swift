@@ -11,6 +11,7 @@ struct RecentAnalysisPreview: View {
                     image
                         .resizable()
                         .scaledToFill()
+                        .scaleEffect(1.1) // 避免照片有白邊
                 } placeholder: {
                     ProgressView()
                 }
@@ -18,11 +19,11 @@ struct RecentAnalysisPreview: View {
             // 給 VStack 預設高度，在圖片還在載入時不會因為整個 VStack 沒有高度
             // 導致下方日期 VStack 在中間，沒被撐到最下面，跟 ProgressView 疊在一起
             
-            // 這裡設定 maxWidth: .infinity 跟 maxWidth: 210 會有所不同，不知道為什麼
+            // 這裡原本設定 maxWidth: .infinity，但設定後發現跟 maxWidth: 210 會有所不同，不知道為什麼
             // 照理來說父視圖設定 width: 210 後，子視圖設定 maxWidth: .infinity 應該也是 210
             // 但結果 maxWidth: .infinity 與 maxWidth: 210 不同，會影響下方 VStack 的寬度與圖片寬度一樣，而不是跟父視圖一樣
             // 目前推測是因為圖片過寬導致意想不到的佈局效果
-            .frame(maxWidth: 210, maxHeight: .infinity)
+            .frame(width: 210, height: 150)
             
             // 日期
             VStack {
@@ -40,7 +41,7 @@ struct RecentAnalysisPreview: View {
                 }
             }
             .padding(.leading, 15)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(width: 210, alignment: .leading)
             .frame(height: 50)
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: 20))

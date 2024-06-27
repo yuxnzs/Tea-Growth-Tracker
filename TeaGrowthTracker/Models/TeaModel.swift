@@ -5,12 +5,14 @@ class Tea: Identifiable, ObservableObject {
     let teaGardenID: Int
     let name: String
     let location: String
+    var aiPlantingImages: AiPlantingImages?
     let teaData: [TeaData]
     
-    init(teaGardenID: Int, name: String, location: String, teaData: [TeaData]) {
+    init(teaGardenID: Int, name: String, location: String, aiPlantingImages: AiPlantingImages? = nil, teaData: [TeaData]) {
         self.teaGardenID = teaGardenID
         self.name = name
         self.location = location
+        self.aiPlantingImages = aiPlantingImages
         self.teaData = teaData
     }
 }
@@ -34,4 +36,9 @@ class TeaData: Identifiable {
         self.growth = growth
         self.plantingRate = plantingRate
     }
+}
+
+struct AiPlantingImages: Codable {
+    let original: String
+    let marked: String
 }
