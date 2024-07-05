@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AnalysisView: View {
-    @State private var selectedIndex: Int? = 0 // 追蹤目前圖片選中的 index
+    @State private var selectedIndex: Int = 0 // 追蹤目前圖片選中的 index
     
     let teaData: TeaData
     var isSheet: Bool
@@ -36,15 +36,15 @@ struct AnalysisView: View {
                             }
                         }
                         // 讓 ScrollView 滑動時有一格一格效果
-                        .content.offset(x: -CGFloat(selectedIndex!) * geometry.size.width)
+                        .content.offset(x: -CGFloat(selectedIndex) * geometry.size.width)
                         .gesture(
                             DragGesture()
                                 .onEnded { value in
                                     let threshold: CGFloat = 50
                                     if value.translation.width < -threshold {
-                                        selectedIndex = min(selectedIndex! + 1, 1) // 1 是最大 index
+                                        selectedIndex = min(selectedIndex + 1, 1) // 1 是最大 index
                                     } else if value.translation.width > threshold {
-                                        selectedIndex = max(selectedIndex! - 1, 0) // 0 是最小 index
+                                        selectedIndex = max(selectedIndex - 1, 0) // 0 是最小 index
                                     }
                                 }
                         )
@@ -55,6 +55,7 @@ struct AnalysisView: View {
                             NavigationLink {
                                 FullImageView(
                                     selectedTab: $selectedIndex,
+                                    isAnalysisView: true,
                                     images: [teaData.originalImage, teaData.analyzedImage])
                             } label: {
                                 Image(systemName: "arrow.down.left.and.arrow.up.right")

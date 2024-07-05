@@ -22,10 +22,12 @@ struct AreaListView: View {
                         if aiImagesExist {
                             if let images = groupedTeaData[date]?.first(where: { $0.1 != nil })?.1 {
                                 NavigationLink {
-                                    FullImageView(selectedTab: .constant(nil), images: [
-                                        images.original,
-                                        images.marked
-                                    ])
+                                    FullImageView(selectedTab: .constant(0),
+                                                  isAnalysisView: false,
+                                                  images: [
+                                                    images.original,
+                                                    images.marked
+                                                  ])
                                 } label: {
                                     Text("AI 標記種植程度低區域")
                                 }
