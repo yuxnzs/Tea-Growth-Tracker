@@ -18,7 +18,7 @@
 
 ## 專案展示 🖥
 
-
+https://github.com/user-attachments/assets/5ebafdff-781a-4dcc-aa02-189b66c3fc19
 
 ## 專案分工 🤝
 
