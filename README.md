@@ -1,4 +1,4 @@
-# 茶園監測 App 🌿
+# 茶園監控 App 🌿
 
 ![App Poster](./assets/poster.png)
 ![App Interface](./assets/app_interface.png)
@@ -14,7 +14,7 @@
 
 ## 專案介紹 🌐
 
-「茶園監測 App」是一款專為茶農設計的應用程式，使茶農能夠透過手機查看本團隊拍攝及分析後的茶園影像。這款 App 使用 `Swift` 開發前端，`JavaScript` 開發後端，並由 `Python` 進行影像分析和 `Microsoft Azure` 的自訂視覺服務進行影像辨識，為茶農提供關於茶園生長情形數據和種植程度分析。透過這樣的技術整合，茶農能夠利用科技輔助茶園的日常管理。
+「茶園監控 App」是一款專為茶農設計的應用程式，使茶農能夠透過手機查看本團隊拍攝及分析後的茶園影像。這款 App 使用 `Swift` 開發前端，`JavaScript` 開發後端，並由 `Python` 進行影像分析和 `Microsoft Azure` 的自訂視覺服務進行影像辨識，為茶農提供關於茶園生長情形數據和種植程度分析。透過這樣的技術整合，茶農能夠利用科技輔助茶園的日常管理。
 
 ## 專案展示 🖥
 
@@ -50,7 +50,7 @@ https://github.com/user-attachments/assets/5ebafdff-781a-4dcc-aa02-189b66c3fc19
 
 ## 後端程式碼 ⚙️
 
-- [茶園監測系統後端](https://github.com/yuxnzs/Tea-Backend)
+- [茶園監控系統後端](https://github.com/yuxnzs/Tea-Backend)
 
 ## 圖示來源 🌟
 
