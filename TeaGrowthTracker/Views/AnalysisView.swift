@@ -71,11 +71,12 @@ struct AnalysisView: View {
                 Spacer().frame(height: 355)
                 
                 // 從 Sheet 過來位置會長得不一樣，所以需特別處理
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     Text("\(teaData.area) 區分析結果")
                         .font(.system(size: 25))
                         .fontWeight(.bold)
                         .padding(.leading, 20)
+                        .padding(.bottom, 14)
                     
                     DataGrid(teaData: teaData)
                 }
