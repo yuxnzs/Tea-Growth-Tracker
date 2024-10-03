@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RecentAnalysisPreview: View {
+    @State var isLoading = true
     let teaData: TeaData
     
     var body: some View {
@@ -45,7 +46,7 @@ struct RecentAnalysisPreview: View {
             .frame(height: 50)
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: 20))
-            .shadow(radius: 20)
+            .shadow(radius: isLoading ? 0 : 20) // 圖片載入中時日期容器不要有陰影
         }
         .frame(width: 210, height: 150)
         .clipShape(RoundedRectangle(cornerRadius: 20))
