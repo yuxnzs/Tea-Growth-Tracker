@@ -20,7 +20,7 @@ struct AnalysisImage: View {
                     alignment: .bottomLeading
                 )
         } placeholder: {
-            ProgressView()
+            LoadingPlaceholder()
                 // 載入時會與圖片大小一樣，不會導致載入時大小有不一致情形
                 .frame(width: width, height: 350)
         }

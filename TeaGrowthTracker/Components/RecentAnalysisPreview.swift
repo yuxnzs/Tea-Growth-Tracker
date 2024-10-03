@@ -14,7 +14,10 @@ struct RecentAnalysisPreview: View {
                         .scaledToFill()
                         .scaleEffect(1.1) // 避免照片有白邊
                 } placeholder: {
-                    ProgressView()
+                    LoadingPlaceholder()
+                        .onDisappear() {
+                            isLoading = false
+                        }
                 }
             }
             // 給 VStack 預設高度，在圖片還在載入時不會因為整個 VStack 沒有高度
