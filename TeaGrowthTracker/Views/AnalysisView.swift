@@ -51,23 +51,16 @@ struct AnalysisView: View {
                         .animation(.easeInOut, value: selectedIndex)
                         
                         // 跳頁到 FullImageView 按鈕
-                        VStack {
-                            NavigationLink {
-                                FullImageView(
+                        FullScreenButton(
+                            destination: FullImageView(
                                     selectedTab: $selectedIndex,
                                     isAnalysisView: true,
-                                    images: [teaData.originalImage, teaData.analyzedImage])
-                            } label: {
-                                Image(systemName: "arrow.down.left.and.arrow.up.right")
-                                    .font(.system(size: 20))
-                                    .foregroundStyle(.white)
-                                    .padding(10)
-                                    .background(.black.opacity(0.7))
-                                    .clipShape(Circle())
-                            }
-                            .padding(.bottom, 10)
-                            .padding(.trailing, 60)
-                        }
+                                    asyncImages: [teaData.originalImage, teaData.analyzedImage],
+                                    useUIImage: false,
+                                    uiImage: nil
+                                ),
+                            isAnalysisView: true
+                        )
                     }
                 }
                 // ignoresSafeArea 後元素實際還是在原本位置
