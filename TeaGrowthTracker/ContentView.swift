@@ -260,12 +260,7 @@ struct ContentView: View {
                 .overlay {
                     // 相機關閉後，正在載入所拍攝的照片時顯示
                     if isCameraLoading {
-                        ZStack {
-                            Color.black.opacity(0.5)
-                                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-                            ProgressView()
-                        }
-                        .ignoresSafeArea()
+                        ActionLoadingView()
                     }
                 }
             }
