@@ -35,14 +35,7 @@ struct ContentView: View {
                     // 取得資料時顯示載入中
                     if isLoading {
                         VStack {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle())
-                                .scaleEffect(1.5)
-                            
-                            Text("載入中...")
-                                .font(.title)
-                                .fontWeight(.bold)
-                                .padding(.top, 25)
+                            LoadingView()
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
