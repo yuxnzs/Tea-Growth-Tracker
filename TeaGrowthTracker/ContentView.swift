@@ -273,8 +273,19 @@ struct ContentView: View {
     }
     
     func fetchTeaData() async {
+        let startTime = Date()
+        
         do {
             try await teaService.fetchTeaData()
+            let endTime = Date()
+            let timeInterval = endTime.timeIntervalSince(startTime)
+            
+            // 如果取得資料時間小於 5 秒，繼續等待直到滿 5 秒，避免畫面快速閃爍
+            if timeInterval < 5 {
+                let remainingTime = 5.0 - timeInterval
+                try await Task.sleep(nanoseconds: UInt64(remainingTime * 1_000_000_000)) // 等待剩餘的時間
+            }
+            
             isLoading = false
         } catch {
             print("Error: \(error)")
