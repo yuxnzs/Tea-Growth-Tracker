@@ -11,7 +11,7 @@ struct ContentView: View {
     
     // 控制 Sheet 顯示
     @State private var isAnalysisViewPresented: Bool = false
-    @State private var isToggleSearchViewPresented: Bool = false
+    @State private var isTeaGardenSelectorViewPresented: Bool = false
     
     @State private var needsRefreshData = false
     
@@ -68,9 +68,9 @@ struct ContentView: View {
                                                     .foregroundStyle(.white)
                                                 // 點擊茶園名稱切換茶園
                                                     .onTapGesture {
-                                                        isToggleSearchViewPresented.toggle()
+                                                        isTeaGardenSelectorViewPresented.toggle()
                                                     }
-                                                    .sheet(isPresented: $isToggleSearchViewPresented, onDismiss: {
+                                                    .sheet(isPresented: $isTeaGardenSelectorViewPresented, onDismiss: {
                                                         // 關閉時，獲取新的茶園資料
                                                         needsRefreshData = true
                                                     }) {
@@ -231,7 +231,7 @@ struct ContentView: View {
                             .ignoresSafeArea()
                     }
                 }
-                // 從 sheet 中的 ToggleSearchView 返回時觸發
+                // 從 sheet 中的 TeaGardenSelectorView 返回時觸發
                 .onChange(of: needsRefreshData) { newValue in
                     if newValue {
                         // 更新資料
