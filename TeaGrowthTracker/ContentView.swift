@@ -228,7 +228,7 @@ struct ContentView: View {
                 }
                 .onAppear {
                     Task {
-                        await fetchTeaInfo()
+                        await fetchTeaData()
                     }
                 }
                 // 從 sheet 中的 ToggleSearchView 返回時觸發
@@ -236,7 +236,7 @@ struct ContentView: View {
                     if newValue {
                         // 更新資料
                         Task {
-                            await fetchTeaInfo()
+                            await fetchTeaData()
                             needsRefreshData = false
                         }
                     }
@@ -272,7 +272,7 @@ struct ContentView: View {
         }
     }
     
-    func fetchTeaInfo() async {
+    func fetchTeaData() async {
         do {
             try await teaService.fetchTeaData()
             isLoading = false
