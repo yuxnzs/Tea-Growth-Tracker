@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct ContentView: View {
     @StateObject var teaService = TeaService()
@@ -16,6 +17,15 @@ struct ContentView: View {
     
     // 傳遞被點擊的歷史分析結果
     @State var selectedTeaData: TeaData? = nil
+    
+    // 相機或相簿照片選擇
+    @State private var showOptions = false
+    @State private var showPhotoPicker = false
+    @State private var showCamera = false
+    @State private var isCameraLoading = false
+    @State private var photoPickerItem: PhotosPickerItem? = nil
+    @State private var cameraImage: UIImage? = nil
+    @State private var showAnalysisPage = false
     
     var body: some View {
         NavigationStack {
@@ -58,6 +68,18 @@ struct ContentView: View {
                                                     .font(.title)
                                                     .fontWeight(.bold)
                                                     .foregroundStyle(.white)
+                                                // 點擊茶園名稱切換茶園
+                                                    .onTapGesture {
+                                                        isToggleSearchViewPresented.toggle()
+                                                    }
+                                                    .sheet(isPresented: $isToggleSearchViewPresented, onDismiss: {
+                                                        // 關閉時，獲取新的茶園資料
+                                                        needsRefreshData = true
+                                                    }) {
+                                                        TeaGardenSelectorView()
+                                                            .environmentObject(teaService)
+                                                            .presentationDetents([.fraction(0.5)])
+                                                    }
                                                 
                                                 Spacer()
                                             }
@@ -86,16 +108,29 @@ struct ContentView: View {
                                                 .scaledToFit()
                                                 .frame(width: 65, height: 65)
                                         }
+                                        // 點擊茶圖標後顯示選擇相機或相簿
                                         .onTapGesture {
-                                            isToggleSearchViewPresented.toggle()
+                                            showOptions = true
                                         }
-                                        .sheet(isPresented: $isToggleSearchViewPresented, onDismiss: {
-                                            // 關閉時，獲取新的 id 資料
-                                            needsRefreshData = true
-                                        }) {
-                                            TeaGardenSelectorView()
-                                                .environmentObject(teaService)
-                                                .presentationDetents([.fraction(0.5)])
+                                        .overlay {
+                                            PhotoSelectionButton(
+                                                isCameraLoading: $isCameraLoading,
+                                                showOptions: $showOptions,
+                                                showPhotoPicker: $showPhotoPicker,
+                                                showCamera: $showCamera,
+                                                photoPickerItem: $photoPickerItem,
+                                                cameraImage: $cameraImage,
+                                                onPhotoPickerItemChange: { newItem in
+                                                    if newItem != nil {
+                                                        showAnalysisPage = true
+                                                    }
+                                                },
+                                                onSelectedImageChange: { newImage in
+                                                    if newImage != nil {
+                                                        showAnalysisPage = true
+                                                    }
+                                                }
+                                            )
                                         }
                                     }
                                     .frame(maxWidth: .infinity)
@@ -220,7 +255,26 @@ struct ContentView: View {
                           dismissButton: .default(Text("OK"))
                     )
                 }
-                
+                // 導航到茶葉分析頁面
+                .navigationDestination(isPresented: $showAnalysisPage) {
+                    TeaLeafAnalysisView(photoPickerItem: photoPickerItem, cameraImage: cameraImage)
+                    // 重置狀態，不然使用相機後再用相簿，會都是用相機的圖片
+                        .onDisappear {
+                            cameraImage = nil
+                            photoPickerItem = nil
+                        }
+                }
+                .overlay {
+                    // 相機關閉後，正在載入所拍攝的照片時顯示
+                    if isCameraLoading {
+                        ZStack {
+                            Color.black.opacity(0.5)
+                                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                            ProgressView()
+                        }
+                        .ignoresSafeArea()
+                    }
+                }
             }
         }
     }
