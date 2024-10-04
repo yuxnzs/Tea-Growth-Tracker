@@ -259,7 +259,8 @@ struct ContentView: View {
                 }
                 .overlay {
                     // 相機關閉後，正在載入所拍攝的照片時顯示
-                    if isCameraLoading {
+                    // 切換茶園後，重新取得資料時顯示
+                    if isCameraLoading || needsRefreshData {
                         ActionLoadingView()
                     }
                 }
