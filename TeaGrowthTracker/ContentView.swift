@@ -36,6 +36,11 @@ struct ContentView: View {
                     if isLoading {
                         VStack {
                             LoadingView()
+                                .onAppear {
+                                    Task {
+                                        await fetchTeaData()
+                                    }
+                                }
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
@@ -224,11 +229,6 @@ struct ContentView: View {
                         // 安全區域高度，頂部顏色區塊，確保內容不會穿過瀏海
                             .frame(height: geometry.safeAreaInsets.top)
                             .ignoresSafeArea()
-                    }
-                }
-                .onAppear {
-                    Task {
-                        await fetchTeaData()
                     }
                 }
                 // 從 sheet 中的 ToggleSearchView 返回時觸發
