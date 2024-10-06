@@ -232,7 +232,7 @@ struct ContentView: View {
                     }
                 }
                 // 從 sheet 中的 TeaGardenSelectorView 返回時觸發
-                .onChange(of: needsRefreshData) { newValue in
+                .onChange(of: needsRefreshData) { _, newValue in
                     if newValue {
                         // 更新資料
                         Task {

@@ -28,11 +28,11 @@ struct PhotoSelectionButton: View {
                 matching: .images,
                 photoLibrary: .shared()
             )
-            .onChange(of: photoPickerItem) { newItem in
+            .onChange(of: photoPickerItem) { _, newItem in
                 onPhotoPickerItemChange(newItem) // 將選擇的照片傳給外部，通知外部已選擇照片
                 showPhotoPicker = false // 關閉照片選擇器
             }
-            .onChange(of: cameraImage) { newImage in
+            .onChange(of: cameraImage) { _, newImage in
                 onSelectedImageChange(newImage) // 將拍攝的照片傳給外部，通知外部已拍攝照片
             }
             .fullScreenCover(isPresented: $showCamera) {
