@@ -14,7 +14,7 @@ struct FullScreenButton<Destination: View>: View {
                     .font(.system(size: 20))
                     .foregroundStyle(.white)
                     .padding(10)
-                    .background(.black.opacity(0.7))
+                    .background(.black.opacity(0.5))
                     .clipShape(Circle())
             }
             .padding(.bottom, 10)
