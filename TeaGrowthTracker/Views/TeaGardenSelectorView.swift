@@ -12,8 +12,10 @@ struct TeaGardenSelectorView: View {
                     TeaGardenToggle(toggleId: index + 1, teaGardenName: teaGarden)
                 }
             }
+            .padding(.top, -35)
             .environmentObject(teaService)
             .navigationTitle("切換茶園")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
