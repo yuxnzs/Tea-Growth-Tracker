@@ -12,8 +12,8 @@ struct LoadingView: View {
                 .frame(width: 150, height: 150)
                 .offset(y: offsetY) // 透過 y 來上移圖片
                 .onAppear {
-                    // 進入 App 0.5 秒後上移
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    // 進入 App 1 秒後上移
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                         withAnimation(.easeOut(duration: 0.5)) {
                             offsetY = -22 // 圖片上移
                         }
