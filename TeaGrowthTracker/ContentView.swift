@@ -3,6 +3,8 @@ import PhotosUI
 
 struct ContentView: View {
     @StateObject var teaService = TeaService()
+    @StateObject var historyLimitManager = HistoryLimitManager()
+    
     // 剛開啟 App 時取得後端資料，取得完畢再顯示
     @State var isLoading: Bool = true
     
@@ -26,6 +28,10 @@ struct ContentView: View {
     @State private var photoPickerItem: PhotosPickerItem? = nil
     @State private var cameraImage: UIImage? = nil
     @State private var showAnalysisPage = false
+    
+    @State var showHistoryPage: Bool = false
+    // 歷史紀錄頁面載入時顯示
+    @State private var isHistoryLoading = false
     
     var body: some View {
         NavigationStack {
@@ -112,6 +118,9 @@ struct ContentView: View {
                                         }
                                         .overlay {
                                             PhotoSelectionButton(
+                                                showHistoryButton: .constant(true),
+                                                isHistoryLoading: $isHistoryLoading,
+                                                showHistoryPage: $showHistoryPage,
                                                 isCameraLoading: $isCameraLoading,
                                                 showOptions: $showOptions,
                                                 showPhotoPicker: $showPhotoPicker,
@@ -256,14 +265,25 @@ struct ContentView: View {
                             cameraImage = nil
                             photoPickerItem = nil
                         }
+                        .environmentObject(historyLimitManager)
+                }
+                .navigationDestination(isPresented: $showHistoryPage) {
+                    TeaDiseaseHistoryView()
+                        .onAppear() {
+                            // TeaDiseaseHistoryView 載入後，於 ContentView 關閉 ActionLoadingView
+                            isHistoryLoading = false
+                        }
+                        .environmentObject(historyLimitManager)
                 }
                 .overlay {
                     // 相機關閉後，正在載入所拍攝的照片時顯示
+                    // 歷史分析結果頁面載入中時顯示
                     // 切換茶園後，重新取得資料時顯示
-                    if isCameraLoading || needsRefreshData {
+                    if isCameraLoading || isHistoryLoading || needsRefreshData {
                         ActionLoadingView()
                     }
                 }
+                .modelContainer(for: [TeaDisease.self])
             }
         }
     }
