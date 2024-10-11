@@ -227,6 +227,24 @@ extension UIImage {
         return resizedImage
     }
     
+    func resizeProportionally(toFit targetFrame: CGSize) -> UIImage? {
+        // 計算圖片相對於框架的寬高比例
+        let widthRatio = targetFrame.width / self.size.width
+        let heightRatio = targetFrame.height / self.size.height
+        let scaleFactor = min(widthRatio, heightRatio) // 選擇最小比例，避免超出框架
+        
+        // 根據比例計算等比例縮放後的大小
+        let newSize = CGSize(width: self.size.width * scaleFactor, height: self.size.height * scaleFactor)
+        
+        // 繪製縮放後的圖片
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        self.draw(in: CGRect(origin: .zero, size: newSize))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return resizedImage
+    }
+    
     func toMLMultiArray() -> MLMultiArray? {
         guard let cgImage = self.cgImage else { return nil }
         
