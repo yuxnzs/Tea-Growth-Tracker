@@ -1,4 +1,5 @@
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct AnalysisImage: View {
     let imageUrl: String
@@ -6,7 +7,7 @@ struct AnalysisImage: View {
     let width: CGFloat // 手機螢幕寬度
     
     var body: some View {
-        AsyncImage(url: URL(string: imageUrl)) { image in
+        WebImage(url: URL(string: imageUrl)) { image in
             image
                 .resizable()
                 .scaledToFill()

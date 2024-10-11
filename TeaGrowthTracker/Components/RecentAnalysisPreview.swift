@@ -1,4 +1,5 @@
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct RecentAnalysisPreview: View {
     @State var isLoading = true
@@ -8,7 +9,7 @@ struct RecentAnalysisPreview: View {
         ZStack(alignment: .bottom) {
             // 茶園圖片
             VStack {
-                AsyncImage(url: URL(string: teaData.originalImage)) { image in
+                WebImage(url: URL(string: teaData.originalImage)) { image in
                     image
                         .resizable()
                         .scaledToFill()

@@ -1,4 +1,5 @@
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct FullImageView: View {
     @Binding var selectedTab: Int // 預設顯示選項
@@ -13,7 +14,7 @@ struct FullImageView: View {
             if let asyncImages = asyncImages {
                 TabView(selection: $selectedTab) {
                     ForEach(asyncImages.indices, id: \.self) { index in
-                        AsyncImage(url: URL(string: asyncImages[index])) { image in
+                        WebImage(url: URL(string: asyncImages[index])) { image in
                             image
                                 .resizable()
                                 .scaledToFit()
@@ -37,7 +38,7 @@ struct FullImageView: View {
                         .tag(0)
                 } else if let asyncImages = asyncImages {
                     ForEach(asyncImages.indices, id: \.self) { index in
-                        AsyncImage(url: URL(string: asyncImages[index])) { image in
+                        WebImage(url: URL(string: asyncImages[index])) { image in
                             image
                                 .resizable()
                                 .scaledToFit()
