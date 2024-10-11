@@ -16,7 +16,7 @@ struct PhotoSelectionButton: View {
     
     var body: some View {
         EmptyView()
-            .confirmationDialog("選擇來源", isPresented: $showOptions, titleVisibility: .visible) {
+            .confirmationDialog("分析茶葉病害", isPresented: $showOptions, titleVisibility: .visible) {
                 Button("相簿") {
                     showPhotoPicker = true
                 }
