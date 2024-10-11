@@ -2,6 +2,9 @@ import SwiftUI
 import PhotosUI
 
 struct PhotoSelectionButton: View {
+    @Binding var showHistoryButton: Bool
+    @Binding var isHistoryLoading: Bool
+    @Binding var showHistoryPage: Bool
     @Binding var isCameraLoading: Bool
     @Binding var showOptions: Bool
     @Binding var showPhotoPicker: Bool
@@ -19,6 +22,15 @@ struct PhotoSelectionButton: View {
                 }
                 Button("相機") {
                     showCamera = true
+                }
+                if showHistoryButton {
+                    Button("查看歷史分析紀錄") {
+                        isHistoryLoading = true
+                        // 延遲 0.1 秒，避免 ContentView 不會顯示 ActionLoadingView
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            showHistoryPage = true
+                        }
+                    }
                 }
                 Button("取消", role: .cancel) { }
             }
@@ -43,14 +55,5 @@ struct PhotoSelectionButton: View {
 }
 
 #Preview {
-    PhotoSelectionButton(
-        isCameraLoading: .constant(false),
-        showOptions: .constant(false),
-        showPhotoPicker: .constant(false),
-        showCamera: .constant(false),
-        photoPickerItem: .constant(nil),
-        cameraImage: .constant(nil),
-        onPhotoPickerItemChange: { _ in },
-        onSelectedImageChange: { _ in }
-    )
+    ContentView()
 }
