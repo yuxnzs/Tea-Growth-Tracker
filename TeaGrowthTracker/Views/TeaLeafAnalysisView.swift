@@ -1,8 +1,15 @@
 import SwiftUI
+import SwiftData
 import PhotosUI
 import CoreML
 
 struct TeaLeafAnalysisView: View {
+    // 從 SwiftData 取得儲存的茶葉分析資料
+    @Environment(\.modelContext) var modelContext
+    @Query var diseases: [TeaDisease]
+    
+    @EnvironmentObject var historyLimitManager: HistoryLimitManager
+    
     @State private var predictionResult: String? = nil
     @State private var confidence: Double? = nil
     
@@ -17,6 +24,12 @@ struct TeaLeafAnalysisView: View {
     @State private var isCameraLoading = false
     @State private var photoPickerItem: PhotosPickerItem?
     @State private var cameraImage: UIImage?
+    
+    @State private var hasSavedOnce = false
+    @State private var hasSavedSuccessfully = false
+    @State private var hasSavedError = false
+    @State private var hasReachedLimit = false
+    @State private var showActionLoading = false
     
     let containerWidth = UIScreen.main.bounds.width - 40
     // 病害類別名稱，用來對照模型結果
@@ -66,6 +79,34 @@ struct TeaLeafAnalysisView: View {
                     Spacer().frame(height: 170)
                     
                     Button {
+                        if historyLimitManager.hasReachedLimit(diseaseCount: diseases.count) {
+                            hasReachedLimit = true
+                            return
+                        }
+                        
+                        showActionLoading = true
+                        
+                        // 避免阻塞主線程導致畫面卡頓
+                        DispatchQueue.global().async {
+                            if let loadedImage = loadedImage, let predictionResult = predictionResult, let confidence = confidence {
+                                let newDisease = TeaDisease(teaImage: loadedImage, diseaseName: predictionResult, confidenceLevel: confidence)
+                                modelContext.insert(newDisease)
+                                do {
+                                    try modelContext.save()
+                                    DispatchQueue.main.async {
+                                        hasSavedOnce = true
+                                        hasSavedSuccessfully = true
+                                    }
+                                } catch {
+                                    DispatchQueue.main.async {
+                                        hasSavedError = true
+                                    }
+                                }
+                            }
+                            DispatchQueue.main.async {
+                                showActionLoading = false
+                            }
+                        }
                         
                     } label: {
                         ActionButton(
@@ -75,7 +116,7 @@ struct TeaLeafAnalysisView: View {
                             foregroundColor: .white
                         )
                     }
-                    .disabled(isLoading || isImageError || isResultError)
+                    .disabled(isLoading || isImageError || isResultError || hasSavedOnce)
                     .padding(.bottom, 10)
                     
                     Button {
@@ -96,7 +137,10 @@ struct TeaLeafAnalysisView: View {
             }
             .overlay {
                 PhotoSelectionButton(
-                    isCameraLoading: $isCameraLoading, // AnalysisView 不會使用到 isCameraLoading
+                    showHistoryButton: .constant(false), // TeaLeafAnalysisView 不會顯示歷史按鈕
+                    isHistoryLoading: .constant(false), // TeaLeafAnalysisView 不會使用到此狀態
+                    showHistoryPage: .constant(false), // TeaLeafAnalysisView 不會使用到此狀態
+                    isCameraLoading: $isCameraLoading, // TeaLeafAnalysisView 不會使用到此狀態
                     showOptions: $showOptions,
                     showPhotoPicker: $showPhotoPicker,
                     showCamera: $showCamera,
@@ -119,6 +163,32 @@ struct TeaLeafAnalysisView: View {
                 )
                 .frame(width: 0, height: 0) // 隱藏組件
             }
+            .overlay {
+                if showActionLoading {
+                    ActionLoadingView()
+                }
+            }
+            .alert("分析結果已儲存", isPresented: $hasSavedSuccessfully) {
+                Button("確定") {
+                    hasSavedSuccessfully = false
+                }
+            }
+            .alert("分析結果儲存錯誤，請再試一次", isPresented: $hasSavedError) {
+                Button("確定") {
+                    hasSavedError = false
+                }
+            }
+            .alert("已達儲存上限，請刪除部分紀錄後再試一次", isPresented: $hasReachedLimit) {
+                Button("關閉") {
+                    hasReachedLimit = false
+                }
+                NavigationLink {
+                    TeaDiseaseHistoryView()
+                        .environmentObject(historyLimitManager)
+                } label: {
+                    Text("前往紀錄頁面")
+                }
+            }
             .ignoresSafeArea()
         }
     }
@@ -130,6 +200,10 @@ struct TeaLeafAnalysisView: View {
         isLoading = true
         isImageError = false
         isResultError = false
+        hasSavedOnce = false
+        hasSavedSuccessfully = false
+        hasSavedError = false
+        hasReachedLimit = false
     }
     
     func loadImageFromUser() {
@@ -293,4 +367,5 @@ extension UIImage {
 
 #Preview {
     TeaLeafAnalysisView(photoPickerItem: nil, cameraImage: UIImage(named: "test_brown"))
+        .environmentObject(HistoryLimitManager())
 }
