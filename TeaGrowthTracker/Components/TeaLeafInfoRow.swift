@@ -30,7 +30,7 @@ struct TeaLeafInfoRow: View {
                     Text(content)
                 } else {
                     LoadingPlaceholder()
-                        .frame(width: 80, height: 25)
+                        .frame(width: 75, height: 25)
                         .clipShape(RoundedRectangle(cornerRadius: 5))
                 }
             }
