@@ -59,7 +59,7 @@ struct DataCard: View {
             .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(width: 170, height: 170)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(UIColor.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
     }

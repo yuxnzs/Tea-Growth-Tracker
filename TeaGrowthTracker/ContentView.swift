@@ -80,7 +80,7 @@ struct ContentView: View {
                                         .buttonStyle(.plain)
                                         
                                         DataGrid(teaData: latestTeaData)
-                                            .padding(.horizontal, 10)
+                                            .padding(.horizontal, 20)
                                     }
                                     
                                     // 歷史分析結果

@@ -5,8 +5,10 @@ struct DataGrid: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            HStack(spacing: 20) {
+            HStack(spacing: 6) {
                 DataCard(title: "日期", date: teaData.date)
+                
+                Spacer()
                 
                 let (weatherIcon, weatherColor) = getWeatherIconAndColor(weather: teaData.weather)
                 DataCard(title: "天氣",
@@ -15,13 +17,17 @@ struct DataGrid: View {
             }
             .frame(maxWidth: .infinity)
             
-            HStack(spacing: 20) {
+            HStack(spacing: 6) {
                 DataCard(title: "生長率參考值", growth: teaData.growth)
+                
+                Spacer()
                 
                 DataCard(title: "種植程度", plantingRate: teaData.plantingRate)
             }
             .frame(maxWidth: .infinity)
         }
+        .frame(maxWidth: .infinity)
+        .frame(height: UIScreen.main.bounds.height / 2.35)
     }
     
     // 透過後端傳來的天氣描述，轉換成相對應的 Icon 跟 Color

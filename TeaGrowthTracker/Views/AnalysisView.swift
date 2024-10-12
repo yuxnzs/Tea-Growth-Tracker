@@ -79,6 +79,7 @@ struct AnalysisView: View {
                         .padding(.bottom, 14)
                     
                     DataGrid(teaData: teaData)
+                        .padding(.horizontal, 20)
                 }
                 .padding(.bottom, isSheet ? -20 : UIScreen.main.bounds.height / 20)
             }
