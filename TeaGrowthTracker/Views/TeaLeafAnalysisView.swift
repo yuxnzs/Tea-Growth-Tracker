@@ -44,92 +44,97 @@ struct TeaLeafAnalysisView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 0) {
+                    // 茶葉圖片
                     UserTeaImage(loadedImage: loadedImage)
                     
-                    Text("茶葉分析結果")
-                        .frame(width: containerWidth, alignment: .leading)
-                        .font(.system(size: 25, weight: .bold))
-                        .padding(.vertical, 14)
-                    
-                    TeaLeafInfoRow(
-                        isImageError: isImageError,
-                        isResultError: isResultError,
-                        iconName: "info.circle",
-                        title: "預測病害",
-                        content: predictionResult,
-                        containerWidth: containerWidth
-                    )
-                    
-                    // 有錯誤就不顯示
-                    if !isImageError && !isResultError {
+                    // 分析結果與按鈕
+                    VStack(spacing: 0) {
+                        Text("茶葉分析結果")
+                            .frame(width: containerWidth, alignment: .leading)
+                            .font(.system(size: 25, weight: .bold))
+                            .padding(.vertical, 14)
+                        
                         TeaLeafInfoRow(
                             isImageError: isImageError,
                             isResultError: isResultError,
-                            iconName: "waveform.path.ecg",
-                            title: "信心程度",
-                            content: confidence.map { "\(String(format: "%.2f", $0))%" },
+                            iconName: "info.circle",
+                            title: "預測病害",
+                            content: predictionResult,
                             containerWidth: containerWidth
                         )
-                    } else {
-                        // AiTeaLeafInfoRow 高度 + Padding
-                        Spacer()
-                            .frame(height: 60)
-                    }
-                    
-                    Spacer().frame(height: 170)
-                    
-                    Button {
-                        if historyLimitManager.hasReachedLimit(diseaseCount: diseases.count) {
-                            hasReachedLimit = true
-                            return
+                        
+                        // 有錯誤就不顯示
+                        if !isImageError && !isResultError {
+                            TeaLeafInfoRow(
+                                isImageError: isImageError,
+                                isResultError: isResultError,
+                                iconName: "waveform.path.ecg",
+                                title: "信心程度",
+                                content: confidence.map { "\(String(format: "%.2f", $0))%" },
+                                containerWidth: containerWidth
+                            )
+                        } else {
+                            // AiTeaLeafInfoRow 高度 + Padding
+                            Spacer()
+                                .frame(height: 60)
                         }
                         
-                        showActionLoading = true
+                        Spacer() // 推開分析結果跟按鈕
                         
-                        // 避免阻塞主線程導致畫面卡頓
-                        DispatchQueue.global().async {
-                            if let loadedImage = loadedImage, let predictionResult = predictionResult, let confidence = confidence {
-                                let newDisease = TeaDisease(teaImage: loadedImage, diseaseName: predictionResult, confidenceLevel: confidence)
-                                modelContext.insert(newDisease)
-                                do {
-                                    try modelContext.save()
-                                    DispatchQueue.main.async {
-                                        hasSavedOnce = true
-                                        hasSavedSuccessfully = true
-                                    }
-                                } catch {
-                                    DispatchQueue.main.async {
-                                        hasSavedError = true
+                        Button {
+                            if historyLimitManager.hasReachedLimit(diseaseCount: diseases.count) {
+                                hasReachedLimit = true
+                                return
+                            }
+                            
+                            showActionLoading = true
+                            
+                            // 避免阻塞主線程導致畫面卡頓
+                            DispatchQueue.global().async {
+                                if let loadedImage = loadedImage, let predictionResult = predictionResult, let confidence = confidence {
+                                    let newDisease = TeaDisease(teaImage: loadedImage, diseaseName: predictionResult, confidenceLevel: confidence)
+                                    modelContext.insert(newDisease)
+                                    do {
+                                        try modelContext.save()
+                                        DispatchQueue.main.async {
+                                            hasSavedOnce = true
+                                            hasSavedSuccessfully = true
+                                        }
+                                    } catch {
+                                        DispatchQueue.main.async {
+                                            hasSavedError = true
+                                        }
                                     }
                                 }
+                                DispatchQueue.main.async {
+                                    showActionLoading = false
+                                }
                             }
-                            DispatchQueue.main.async {
-                                showActionLoading = false
-                            }
+                            
+                        } label: {
+                            ActionButton(
+                                title: "儲存此次分析",
+                                buttonWidth: containerWidth,
+                                backgroundColor: Color(red: 0.098, green: 0.412, blue: 0.235),
+                                foregroundColor: .white
+                            )
                         }
+                        .disabled(isLoading || isImageError || isResultError || hasSavedOnce)
+                        .padding(.bottom, 10)
                         
-                    } label: {
-                        ActionButton(
-                            title: "儲存此次分析",
-                            buttonWidth: containerWidth,
-                            backgroundColor: Color(red: 0.098, green: 0.412, blue: 0.235),
-                            foregroundColor: .white
-                        )
+                        Button {
+                            showOptions = true
+                        } label: {
+                            ActionButton(
+                                title: "重新進行分析",
+                                buttonWidth: containerWidth,
+                                backgroundColor: .gray.opacity(0.3),
+                                foregroundColor: .black
+                            )
+                        }
+                        .disabled(isLoading)
                     }
-                    .disabled(isLoading || isImageError || isResultError || hasSavedOnce)
-                    .padding(.bottom, 10)
-                    
-                    Button {
-                        showOptions = true
-                    } label: {
-                        ActionButton(
-                            title: "重新進行分析",
-                            buttonWidth: containerWidth,
-                            backgroundColor: .gray.opacity(0.3),
-                            foregroundColor: .black
-                        )
-                    }
-                    .disabled(isLoading)
+                    .frame(height: UIScreen.main.bounds.height - 380) // 螢幕高度 - 圖片高度 + 一點底部間距
                 }
             }
             .onAppear {
