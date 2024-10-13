@@ -53,7 +53,13 @@ struct ContentView: View {
                         // 取得最近一次資料
                         if let latestTeaData = teaService.teaGardenData.last?.teaData.first {
                             ScrollView {
-                                Spacer().frame(height: 132)
+                                TeaGardenInfoBar(
+                                    teaGardenName: teaService.teaGardenData.last!.name,
+                                    teaGardenLocation: teaService.teaGardenData.last!.location,
+                                    isPlaceholder: true
+                                )
+                                .padding(.bottom, 7)
+                                .environmentObject(teaService)
                                 
                                 VStack(spacing: 16) {
                                     // 最近一次分析結果
@@ -135,103 +141,22 @@ struct ContentView: View {
                             }
                             
                             // 頂部資訊欄
-                            HStack {
-                                // 文字資訊
-                                VStack(spacing: 20) {
-                                    // 茶園名稱
-                                    HStack {
-                                        Image("pin")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 30, height: 30)
-                                            .foregroundStyle(.white)
-                                            .padding(.trailing, 3)
-                                            .padding(.leading, -3)
-                                        
-                                        Text(teaService.teaGardenData.last!.name)
-                                            .font(.title)
-                                            .fontWeight(.bold)
-                                            .foregroundStyle(.white)
-                                        // 點擊茶園名稱切換茶園
-                                            .onTapGesture {
-                                                isTeaGardenSelectorViewPresented.toggle()
-                                            }
-                                            .sheet(isPresented: $isTeaGardenSelectorViewPresented, onDismiss: {
-                                                // 關閉時，獲取新的茶園資料
-                                                needsRefreshData = true
-                                            }) {
-                                                TeaGardenSelectorView()
-                                                    .environmentObject(teaService)
-                                                    .presentationDetents([.fraction(0.45)])
-                                            }
-                                        
-                                        Spacer()
-                                    }
-                                    
-                                    // 茶園位置
-                                    HStack {
-                                        Image(systemName: "location.fill")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 20, height: 20)
-                                            .foregroundStyle(.white)
-                                            .padding(.trailing, 3)
-                                        
-                                        Text(teaService.teaGardenData.last!.location)
-                                            .font(.title2)
-                                            .fontWeight(.bold)
-                                            .foregroundStyle(.white)
-                                        
-                                        Spacer()
-                                    }
-                                }
-                                // 茶圖標
-                                VStack {
-                                    Image("leaf")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 65, height: 65)
-                                }
-                                // 點擊茶圖標後顯示選擇相機或相簿
-                                .onTapGesture {
-                                    showOptions = true
-                                }
-                                .overlay {
-                                    PhotoSelectionButton(
-                                        showHistoryButton: .constant(true),
-                                        isHistoryLoading: $isHistoryLoading,
-                                        showHistoryPage: $showHistoryPage,
-                                        isCameraLoading: $isCameraLoading,
-                                        showOptions: $showOptions,
-                                        showPhotoPicker: $showPhotoPicker,
-                                        showCamera: $showCamera,
-                                        photoPickerItem: $photoPickerItem,
-                                        cameraImage: $cameraImage,
-                                        onPhotoPickerItemChange: { newItem in
-                                            if newItem != nil {
-                                                showAnalysisPage = true
-                                            }
-                                        },
-                                        onSelectedImageChange: { newImage in
-                                            if newImage != nil {
-                                                showAnalysisPage = true
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, 20)
-                            .padding(.bottom)
-                            .padding(.horizontal)
-                            .background(Color(red: 0.098, green: 0.412, blue: 0.235)) // #19693c
-                            // 切底部圓角
-                            .clipShape(UnevenRoundedRectangle(
-                                topLeadingRadius: 0,
-                                bottomLeadingRadius: 25,
-                                bottomTrailingRadius: 25,
-                                topTrailingRadius: 0
-                            ))
+                            TeaGardenInfoBar(
+                                isTeaGardenSelectorViewPresented: $isTeaGardenSelectorViewPresented,
+                                needsRefreshData: $needsRefreshData,
+                                isHistoryLoading: $isHistoryLoading,
+                                showHistoryPage: $showHistoryPage,
+                                isCameraLoading: $isCameraLoading,
+                                showOptions: $showOptions,
+                                showPhotoPicker: $showPhotoPicker,
+                                showCamera: $showCamera,
+                                photoPickerItem: $photoPickerItem,
+                                cameraImage: $cameraImage,
+                                showAnalysisPage: $showAnalysisPage,
+                                teaGardenName: teaService.teaGardenData.last!.name,
+                                teaGardenLocation: teaService.teaGardenData.last!.location
+                            )
+                            .environmentObject(teaService)
                         }
                     }
                     
