@@ -436,7 +436,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TeaGrowthTracker/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "茶園監測";
+				INFOPLIST_KEY_CFBundleDisplayName = "茶園監控";
 				INFOPLIST_KEY_NSCameraUsageDescription = "此應用程式需使用相機拍攝來辨識病蟲害";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -469,7 +469,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TeaGrowthTracker/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "茶園監測";
+				INFOPLIST_KEY_CFBundleDisplayName = "茶園監控";
 				INFOPLIST_KEY_NSCameraUsageDescription = "此應用程式需使用相機拍攝來辨識病蟲害";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
