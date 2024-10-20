@@ -15,7 +15,7 @@ struct LoadingView: View {
                     // 進入 App 1 秒後上移
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                         withAnimation(.easeOut(duration: 0.5)) {
-                            offsetY = -22 // 圖片上移
+                            offsetY = -20 // 圖片上移
                         }
                         
                         // 延遲 0.1 秒讓 ProgressView 同步淡入
