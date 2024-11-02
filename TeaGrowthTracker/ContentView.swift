@@ -9,7 +9,7 @@ struct ContentView: View {
     @State var isLoading: Bool = true
     
     // 控制 Alert 顯示
-    @State private var showAlert: Bool = false
+    @State private var isError: Bool = false
     
     // 控制 Sheet 顯示
     @State private var isAnalysisViewPresented: Bool = false
@@ -178,7 +178,7 @@ struct ContentView: View {
                     }
                 }
                 // 警告提示
-                .alert(isPresented: $showAlert) {
+                .alert(isPresented: $isError) {
                     Alert(title: Text("錯誤"),
                           message: Text("伺服器錯誤，請稍後再試。"),
                           dismissButton: .default(Text("OK"))
@@ -232,7 +232,7 @@ struct ContentView: View {
             isLoading = false
         } catch {
             print("Error: \(error)")
-            showAlert = true
+            isError = true
         }
     }
 }
