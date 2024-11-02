@@ -28,7 +28,7 @@ class TeaService: ObservableObject {
     
     @AppStorage("selectedToggle") var selectedToggle: Int = 1
     
-    private let baseURL: String = ""
+    private let baseURL: String = Config.baseURL
     private let path: String = "/tea"
     
     // 在 init 中使用 self.selectedToggle 前，必須先初始化所有 Stored Property
