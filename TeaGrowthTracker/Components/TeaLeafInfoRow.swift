@@ -16,7 +16,7 @@ struct TeaLeafInfoRow: View {
                     Image(systemName: "exclamationmark.triangle")
                     Text(isImageError ? "圖片處理失敗" : "AI 預測發生錯誤，請再試一次")
                 }
-                .foregroundColor(.red)
+                .foregroundStyle(.red)
             } else {
                 // 圖示跟標題
                 HStack {
