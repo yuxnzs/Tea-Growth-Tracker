@@ -5,6 +5,7 @@ struct ActionButton: View {
     let buttonWidth: CGFloat
     let backgroundColor: Color
     let foregroundColor: Color
+    @Environment(\.colorScheme) var colorScheme // 取得目前顏色模式
     
     var body: some View {
         Text(title)
@@ -14,7 +15,7 @@ struct ActionButton: View {
             .frame(width: buttonWidth, height: 50)
             .background(backgroundColor)
             .clipShape(RoundedRectangle(cornerRadius: 10))
-            .foregroundStyle(foregroundColor)
+            .foregroundStyle(colorScheme == .dark ? .white : foregroundColor)
     }
 }
 

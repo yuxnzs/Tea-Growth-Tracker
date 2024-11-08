@@ -7,6 +7,7 @@ struct TeaLeafInfoRow: View {
     var title: String
     var content: String?
     var containerWidth: CGFloat
+    @Environment(\.colorScheme) var colorScheme // 取得目前顏色模式
     
     var body: some View {
         HStack {
@@ -23,7 +24,9 @@ struct TeaLeafInfoRow: View {
                     Image(systemName: iconName)
                     Text(title)
                 }
-                .foregroundStyle(Color(red: 0.098, green: 0.412, blue: 0.235))
+                .foregroundStyle(colorScheme == .dark ?
+                                 Color(red: 0.30, green: 0.60, blue: 0.40) :
+                                 Color("ThemeColor")) // 深色模式使用更淡的綠色
                 Spacer()
                 // 內容
                 if let content = content {
