@@ -11,6 +11,9 @@ struct ContentView: View {
     // 控制 Alert 顯示
     @State private var isError: Bool = false
     
+    // 離線模式
+    @State private var isOfflineModeEnabled: Bool = false
+    
     // 控制 Sheet 顯示
     @State private var isAnalysisViewPresented: Bool = false
     @State private var isTeaGardenSelectorViewPresented: Bool = false
@@ -41,12 +44,16 @@ struct ContentView: View {
                     // 取得資料時顯示載入中
                     if isLoading {
                         VStack {
-                            LoadingView()
+                            LoadingView(isOfflineModeEnabled: $isOfflineModeEnabled)
                                 .onAppear {
-                                    Task {
-                                        await fetchTeaData()
+                                    // 若是離線模式就不用取得資料
+                                    if !isOfflineModeEnabled {
+                                        Task {
+                                            await fetchTeaData()
+                                        }
                                     }
                                 }
+                                .environmentObject(historyLimitManager)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
@@ -173,16 +180,29 @@ struct ContentView: View {
                         // 更新資料
                         Task {
                             await fetchTeaData()
-                            needsRefreshData = false
+                            DispatchQueue.main.async {
+                                needsRefreshData = false
+                            }
                         }
                     }
                 }
                 // 警告提示
-                .alert(isPresented: $isError) {
-                    Alert(title: Text("錯誤"),
-                          message: Text("伺服器錯誤，請稍後再試。"),
-                          dismissButton: .default(Text("OK"))
-                    )
+                .alert("錯誤", isPresented: $isError) {
+                    Button("重試") {
+                        Task {
+                            DispatchQueue.main.async {
+                                isError = false
+                            }
+                            // 避免使用者連續點擊導致 alert 未正確顯示
+                            try? await Task.sleep(for: .seconds(0.2))
+                            await fetchTeaData()
+                        }
+                    }
+                    Button("進入離線模式") {
+                        isOfflineModeEnabled = true
+                    }
+                } message: {
+                    Text("伺服器連線錯誤，請稍後再試")
                 }
                 // 導航到茶葉分析頁面
                 .navigationDestination(isPresented: $showAnalysisPage) {
@@ -229,10 +249,14 @@ struct ContentView: View {
                 try await Task.sleep(nanoseconds: UInt64(remainingTime * 1_000_000_000)) // 等待剩餘的時間
             }
             
-            isLoading = false
+            DispatchQueue.main.async {
+                isLoading = false
+            }
         } catch {
-            print("Error: \(error)")
-            isError = true
+            DispatchQueue.main.async {
+                isLoading = true
+                isError = true
+            }
         }
     }
 }
