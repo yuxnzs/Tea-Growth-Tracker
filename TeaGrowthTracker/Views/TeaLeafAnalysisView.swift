@@ -42,11 +42,11 @@ struct TeaLeafAnalysisView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    // 茶葉圖片
-                    UserTeaImage(loadedImage: loadedImage)
-                    
+            VStack(spacing: 0) {
+                // 茶葉圖片
+                UserTeaImage(loadedImage: loadedImage)
+                
+                ScrollView {
                     // 分析結果與按鈕
                     VStack(spacing: 0) {
                         Text("茶葉分析結果")
@@ -136,9 +136,30 @@ struct TeaLeafAnalysisView: View {
                     }
                     .frame(height: UIScreen.main.bounds.height - 380) // 螢幕高度 - 圖片高度 + 一點底部間距
                 }
-            }
-            .onAppear {
-                loadImageFromUser()
+                .onAppear {
+                    loadImageFromUser()
+                }
+                .alert("分析結果已儲存", isPresented: $hasSavedSuccessfully) {
+                    Button("確定") {
+                        hasSavedSuccessfully = false
+                    }
+                }
+                .alert("分析結果儲存錯誤，請再試一次", isPresented: $hasSavedError) {
+                    Button("確定") {
+                        hasSavedError = false
+                    }
+                }
+                .alert("已達儲存上限，請刪除部分紀錄後再試一次", isPresented: $hasReachedLimit) {
+                    Button("關閉") {
+                        hasReachedLimit = false
+                    }
+                    NavigationLink {
+                        TeaDiseaseHistoryView()
+                            .environmentObject(historyLimitManager)
+                    } label: {
+                        Text("前往紀錄頁面")
+                    }
+                }
             }
             .overlay {
                 PhotoSelectionButton(
@@ -171,27 +192,6 @@ struct TeaLeafAnalysisView: View {
             .overlay {
                 if showActionLoading {
                     ActionLoadingView()
-                }
-            }
-            .alert("分析結果已儲存", isPresented: $hasSavedSuccessfully) {
-                Button("確定") {
-                    hasSavedSuccessfully = false
-                }
-            }
-            .alert("分析結果儲存錯誤，請再試一次", isPresented: $hasSavedError) {
-                Button("確定") {
-                    hasSavedError = false
-                }
-            }
-            .alert("已達儲存上限，請刪除部分紀錄後再試一次", isPresented: $hasReachedLimit) {
-                Button("關閉") {
-                    hasReachedLimit = false
-                }
-                NavigationLink {
-                    TeaDiseaseHistoryView()
-                        .environmentObject(historyLimitManager)
-                } label: {
-                    Text("前往紀錄頁面")
                 }
             }
             .ignoresSafeArea()
