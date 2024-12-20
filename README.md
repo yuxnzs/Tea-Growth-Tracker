@@ -1,7 +1,7 @@
 # 茶園監控 App 🌿
 
 ![App Poster](./assets/poster.png)
-![App Interface](./assets/app_interface.png)
+![App Interface](./assets/app_interfaces.png)
 
 > 注意：此專題內所用之茶園名稱僅供示意，非真實茶園名稱，四個茶園均於石碇拍攝。
 
