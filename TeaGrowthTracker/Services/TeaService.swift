@@ -42,6 +42,7 @@ class TeaService: ObservableObject {
         self.id = "/\(self.selectedToggle)" // 每次開啟 App 時根據上次 selectedToggle 的值更新 id
     }
     
+    @MainActor
     func fetchTeaData() async throws {
         guard let url = URL(string: "\(baseURL)\(path)\(id)") else {
             throw URLError(.badURL)
@@ -53,31 +54,29 @@ class TeaService: ObservableObject {
         
         // UI 更新必須在主執行緒上進行
         // 在主執行緒中更新 @Published 屬性
-        DispatchQueue.main.async {
-            self.teaGardenData = teaGardens.map { garden in
-                Tea(
-                    teaGardenID: garden.teaGardenID,
-                    name: garden.teaGardenName,
-                    location: garden.teaGardenLocation,
-                    aiPlantingImages: garden.aiPlantingImages.map { imagePair in
-                        AiPlantingImages(
-                            original: imagePair.original,
-                            marked: imagePair.marked
-                        )
-                    },
-                    teaData: garden.teaData.map { decodeData in
-                        TeaData(
-                            area: decodeData.area,
-                            originalImage: decodeData.originalImage,
-                            analyzedImage: decodeData.analyzedImage,
-                            date: decodeData.date,
-                            weather: decodeData.weather,
-                            growth: decodeData.growth,
-                            plantingRate: decodeData.plantingRate
-                        )
-                    }
-                )
-            }
+        self.teaGardenData = teaGardens.map { garden in
+            Tea(
+                teaGardenID: garden.teaGardenID,
+                name: garden.teaGardenName,
+                location: garden.teaGardenLocation,
+                aiPlantingImages: garden.aiPlantingImages.map { imagePair in
+                    AiPlantingImages(
+                        original: imagePair.original,
+                        marked: imagePair.marked
+                    )
+                },
+                teaData: garden.teaData.map { decodeData in
+                    TeaData(
+                        area: decodeData.area,
+                        originalImage: decodeData.originalImage,
+                        analyzedImage: decodeData.analyzedImage,
+                        date: decodeData.date,
+                        weather: decodeData.weather,
+                        growth: decodeData.growth,
+                        plantingRate: decodeData.plantingRate
+                    )
+                }
+            )
         }
     }
 }
