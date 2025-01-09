@@ -41,8 +41,7 @@ struct TeaDiseaseHistoryView: View {
                     .padding(.top, 10)
                     
                     VStack {
-                        // 確保只渲染最近五筆分析紀錄（儲存時已檢查最多 5 筆，這裡再確認一次）
-                        ForEach(diseases.reversed().prefix(5), id: \.id) { disease in
+                        ForEach(diseases.reversed(), id: \.id) { disease in
                             TeaDiseaseHistoryCard(
                                 teaImage: disease.teaImage,
                                 diseaseName: disease.diseaseName,
