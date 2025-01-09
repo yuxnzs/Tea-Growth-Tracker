@@ -42,22 +42,43 @@ struct TeaDiseaseHistoryView: View {
                     
                     VStack {
                         ForEach(diseases.reversed(), id: \.id) { disease in
-                            TeaDiseaseHistoryCard(
-                                teaImage: disease.teaImage,
-                                diseaseName: disease.diseaseName,
-                                confidenceLevel: disease.confidenceLevel,
-                                analysisDate: disease.analysisDate,
-                                onDelete: {
-                                    showActionLoading = true
-                                    
-                                    DispatchQueue.main.async {
-                                        selectedDisease = disease
-                                        showDeleteAlert = true
-                                        showActionLoading = false
+                            NavigationLink {
+                                FullImageView(
+                                    selectedTab: .constant(0),
+                                    isAnalysisView: false,
+                                    asyncImages: nil,
+                                    useUIImage: true,
+                                    uiImage: disease.teaImage
+                                )
+                            } label: {
+                                TeaDiseaseHistoryCardRepresentable(
+                                    teaImage: disease.teaImage,
+                                    diseaseName: disease.diseaseName,
+                                    confidenceLevel: disease.confidenceLevel,
+                                    analysisDate: disease.analysisDate
+                                )
+                                .padding(.bottom, 210)
+                                // UIKit 內按鈕無法在此點擊，因此用 .overlay 添加右上角刪除按鈕
+                                .overlay(alignment: .topTrailing) {
+                                    Button(action: {
+                                        showActionLoading = true
+                                        
+                                        DispatchQueue.main.async {
+                                            selectedDisease = disease
+                                            showDeleteAlert = true
+                                            showActionLoading = false
+                                        }
+                                    }) {
+                                        Image(systemName: "trash")
+                                            .foregroundColor(.red)
                                     }
+                                    .padding(7)
+                                    .background(.ultraThinMaterial)
+                                    .clipShape(Circle())
+                                    .padding(.trailing, 28) // 外距 20 + 內距 8
+                                    .padding(.top, 8)
                                 }
-                            )
-                            .padding(.bottom, 10)
+                            }
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
