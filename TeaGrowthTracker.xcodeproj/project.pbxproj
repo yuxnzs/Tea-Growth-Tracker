@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CA086F4B2C27340200F59DE2 /* FullImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA086F4A2C27340100F59DE2 /* FullImageView.swift */; };
+		CA2A5B5E2D3037310009002E /* HomepageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2A5B5D2D3037310009002E /* HomepageView.swift */; };
 		CA34CD312C1E04AA00B4BBD5 /* DataGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA34CD302C1E04AA00B4BBD5 /* DataGrid.swift */; };
 		CA34CD332C1E075A00B4BBD5 /* DataCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA34CD322C1E075A00B4BBD5 /* DataCard.swift */; };
 		CA3FC0D42CB98A2E0086E5D9 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = CA3FC0D32CB98A2E0086E5D9 /* SDWebImageSwiftUI */; };
@@ -47,6 +48,7 @@
 
 /* Begin PBXFileReference section */
 		CA086F4A2C27340100F59DE2 /* FullImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullImageView.swift; sourceTree = "<group>"; };
+		CA2A5B5D2D3037310009002E /* HomepageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomepageView.swift; sourceTree = "<group>"; };
 		CA34CD302C1E04AA00B4BBD5 /* DataGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataGrid.swift; sourceTree = "<group>"; };
 		CA34CD322C1E075A00B4BBD5 /* DataCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCard.swift; sourceTree = "<group>"; };
 		CA3FC0D52CBAEDC60086E5D9 /* TeaGardenInfoBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaGardenInfoBar.swift; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 				CABA9EF92CAA5A3800773F59 /* LoadingView.swift */,
 				CAD64C662CB0769A00DEF8D1 /* ActionLoadingView.swift */,
 				CAD64C6C2CB2A75900DEF8D1 /* TeaDiseaseHistoryView.swift */,
+				CA2A5B5D2D3037310009002E /* HomepageView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -304,6 +307,7 @@
 				CA40967F2C247F1600CC4AAD /* AreaListView.swift in Sources */,
 				CA3FC0D62CBAEDC60086E5D9 /* TeaGardenInfoBar.swift in Sources */,
 				CABA9EFA2CAA5A3800773F59 /* LoadingView.swift in Sources */,
+				CA2A5B5E2D3037310009002E /* HomepageView.swift in Sources */,
 				CABA9EEC2CA94DEA00773F59 /* UserTeaImage.swift in Sources */,
 				CABA9EF62CA9712A00773F59 /* FullScreenButton.swift in Sources */,
 				CAB944EB2D2D6E1200948B6A /* TeaDiseaseHistoryCardViewController.swift in Sources */,
