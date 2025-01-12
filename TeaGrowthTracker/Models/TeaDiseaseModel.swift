@@ -4,6 +4,7 @@ import UIKit
 @Model
 class TeaDisease {
     var id: UUID
+    var createdAt: Date // 追蹤建立時間
     @Attribute(.externalStorage) var imageData: Data
     var diseaseName: String
     var confidenceLevel: Double
@@ -21,6 +22,7 @@ class TeaDisease {
     
     init(teaImage: UIImage, diseaseName: String, confidenceLevel: Double) {
         self.id = UUID()
+        self.createdAt = Date()
         self.imageData = teaImage.pngData() ?? Data()
         self.diseaseName = diseaseName
         self.confidenceLevel = confidenceLevel
