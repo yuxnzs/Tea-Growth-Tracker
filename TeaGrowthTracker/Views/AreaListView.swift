@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AreaListView: View {
     @EnvironmentObject var teaService: TeaService
+    @EnvironmentObject var displayManager: DisplayManager
     
     var groupedTeaData: [String: [(TeaData, AiPlantingImages?)]] {
         Dictionary(grouping: teaService.teaGardenData.flatMap { teaGarden in
@@ -44,11 +45,22 @@ struct AreaListView: View {
                         ForEach(groupedTeaData[date] ?? [], id: \.0.id) { (teaData, aiImages) in
                             NavigationLink {
                                 AnalysisView(teaData: teaData)
+                                    .onAppear {
+                                        withAnimation {
+                                            displayManager.isShowingTabBar = false
+                                        }
+                                    }
+                                    .environmentObject(displayManager)
                             } label: {
                                 Text("\(teaData.area) 區")
                             }
                         }
                     }
+                }
+            }
+            .onAppear {
+                withAnimation {
+                    displayManager.isShowingTabBar = false
                 }
             }
             .navigationTitle("選擇區域")
@@ -134,4 +146,5 @@ struct AreaListView: View {
                 )
             ]
         ))
+        .environmentObject(DisplayManager())
 }
