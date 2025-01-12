@@ -2,6 +2,7 @@ import SwiftUI
 import PhotosUI
 
 struct PhotoSelectionButton: View {
+    @EnvironmentObject var displayManager: DisplayManager
     @Binding var showHistoryButton: Bool
     @Binding var isHistoryLoading: Bool
     @Binding var showHistoryPage: Bool
@@ -13,6 +14,36 @@ struct PhotoSelectionButton: View {
     @Binding var cameraImage: UIImage?
     var onPhotoPickerItemChange: (PhotosPickerItem?) -> Void
     var onSelectedImageChange: (UIImage?) -> Void
+    let showTabBarOnCameraCancel: Bool
+    
+    // 只有 TeaGardenInfoBar 要將 showTabBarOnCameraCancel 設為 true，其餘皆為 false
+    init(
+        showHistoryButton: Binding<Bool>,
+        isHistoryLoading: Binding<Bool>,
+        showHistoryPage: Binding<Bool>,
+        isCameraLoading: Binding<Bool>,
+        showOptions: Binding<Bool>,
+        showPhotoPicker: Binding<Bool>,
+        showCamera: Binding<Bool>,
+        photoPickerItem: Binding<PhotosPickerItem?>,
+        cameraImage: Binding<UIImage?>,
+        onPhotoPickerItemChange: @escaping (PhotosPickerItem?) -> Void,
+        onSelectedImageChange: @escaping (UIImage?) -> Void,
+        showTabBarOnCameraCancel: Bool = false
+    ) {
+        self._showHistoryButton = showHistoryButton
+        self._isHistoryLoading = isHistoryLoading
+        self._showHistoryPage = showHistoryPage
+        self._isCameraLoading = isCameraLoading
+        self._showOptions = showOptions
+        self._showPhotoPicker = showPhotoPicker
+        self._showCamera = showCamera
+        self._photoPickerItem = photoPickerItem
+        self._cameraImage = cameraImage
+        self.onPhotoPickerItemChange = onPhotoPickerItemChange
+        self.onSelectedImageChange = onSelectedImageChange
+        self.showTabBarOnCameraCancel = showTabBarOnCameraCancel
+    }
     
     var body: some View {
         EmptyView()
@@ -48,9 +79,11 @@ struct PhotoSelectionButton: View {
                 onSelectedImageChange(newImage) // 將拍攝的照片傳給外部，通知外部已拍攝照片
             }
             .fullScreenCover(isPresented: $showCamera) {
-                CameraView(image: $cameraImage, isCameraLoading: $isCameraLoading)
+                CameraView(image: $cameraImage, isCameraLoading: $isCameraLoading, showTabBarOnCameraCancel: showTabBarOnCameraCancel)
+                    .environmentObject(displayManager)
                     .ignoresSafeArea()
             }
+
     }
 }
 
