@@ -3,6 +3,8 @@ import PhotosUI
 
 struct TeaGardenInfoBar: View {
     @EnvironmentObject var teaService: TeaService
+    @EnvironmentObject var displayManager: DisplayManager
+    
     @Binding var isTeaGardenSelectorViewPresented: Bool
     @Binding var needsRefreshData: Bool
     @Binding var isHistoryLoading: Bool
@@ -122,7 +124,7 @@ struct TeaGardenInfoBar: View {
             }
             .overlay {
                 PhotoSelectionButton(
-                    showHistoryButton: .constant(true),
+                    showHistoryButton: .constant(false), // 主頁不需用到歷史紀錄按鈕，可透過底部導航列進入
                     isHistoryLoading: $isHistoryLoading,
                     showHistoryPage: $showHistoryPage,
                     isCameraLoading: $isCameraLoading,
@@ -133,6 +135,10 @@ struct TeaGardenInfoBar: View {
                     cameraImage: $cameraImage,
                     onPhotoPickerItemChange: { newItem in
                         if newItem != nil {
+                            // 先隱藏底部導航列再顯示分析頁面
+                            withAnimation {
+                                displayManager.isShowingTabBar = false
+                            }
                             showAnalysisPage = true
                         }
                     },
@@ -140,8 +146,10 @@ struct TeaGardenInfoBar: View {
                         if newImage != nil {
                             showAnalysisPage = true
                         }
-                    }
+                    },
+                    showTabBarOnCameraCancel: true
                 )
+                .environmentObject(displayManager)
             }
         }
         .frame(maxWidth: .infinity)
