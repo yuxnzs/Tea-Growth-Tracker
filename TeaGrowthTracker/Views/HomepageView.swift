@@ -4,9 +4,11 @@ import PhotosUI
 struct HomepageView: View {
     @StateObject var teaService = TeaService()
     @EnvironmentObject var historyLimitManager: HistoryLimitManager
+    @EnvironmentObject var displayManager: DisplayManager
     
     // 剛開啟 App 時取得後端資料，取得完畢再顯示
     @State var isLoading: Bool = true
+    @State var firstAppear: Bool = false
     
     // 控制 Alert 顯示
     @State private var isError: Bool = false
@@ -36,6 +38,9 @@ struct HomepageView: View {
     // 歷史紀錄頁面載入時顯示
     @State private var isHistoryLoading = false
     
+    // 避免底部導航列遮擋內容
+    let bottomPadding: CGFloat
+    
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -51,9 +56,11 @@ struct HomepageView: View {
                                         Task {
                                             await fetchTeaData()
                                         }
+                                        firstAppear = true
                                     }
                                 }
                                 .environmentObject(historyLimitManager)
+                                .environmentObject(displayManager)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
@@ -101,6 +108,7 @@ struct HomepageView: View {
                                         NavigationLink {
                                             AreaListView()
                                                 .environmentObject(teaService)
+                                                .environmentObject(displayManager)
                                         } label: {
                                             HStack {
                                                 Text("歷史分析結果")
@@ -144,6 +152,19 @@ struct HomepageView: View {
                                             .padding(.leading, 20)
                                         }
                                     }
+                                    .padding(.bottom, bottomPadding)
+                                }
+                            }
+                            .onAppear {
+                                // 啟動 App 進入到首頁時，不需要動畫出現底部導航列
+                                if firstAppear {
+                                    displayManager.isShowingTabBar = true
+                                    firstAppear = false
+                                } else {
+                                    withAnimation {
+                                        // 當首頁出現時，顯示底部導航列
+                                        displayManager.isShowingTabBar = true
+                                    }
                                 }
                             }
                             
@@ -164,6 +185,7 @@ struct HomepageView: View {
                                 teaGardenLocation: teaService.teaGardenData.last!.location
                             )
                             .environmentObject(teaService)
+                            .environmentObject(displayManager)
                         }
                     }
                     
@@ -213,6 +235,7 @@ struct HomepageView: View {
                             photoPickerItem = nil
                         }
                         .environmentObject(historyLimitManager)
+                        .environmentObject(displayManager)
                 }
                 .navigationDestination(isPresented: $showHistoryPage) {
                     TeaDiseaseHistoryView()
@@ -222,12 +245,31 @@ struct HomepageView: View {
                         }
                         .environmentObject(historyLimitManager)
                 }
+                // 歷史分析結果頁面載入中時顯示
+                .onChange(of: isHistoryLoading) { _, newValue in
+                    if newValue {
+                        displayManager.showActionLoadingView = true
+                    } else {
+                        displayManager.showActionLoadingView = false
+                    }
+                }
+                // 切換茶園後，重新取得資料時顯示
+                .onChange(of: needsRefreshData) { _, newValue in
+                    if newValue {
+                        displayManager.showActionLoadingView = true
+                    } else {
+                        displayManager.showActionLoadingView = false
+                    }
+                }
+                // 相機關閉後，正在載入所拍攝的照片時顯示
                 .overlay {
-                    // 相機關閉後，正在載入所拍攝的照片時顯示
-                    // 歷史分析結果頁面載入中時顯示
-                    // 切換茶園後，重新取得資料時顯示
-                    if isCameraLoading || isHistoryLoading || needsRefreshData {
+                    // 於 HomepageView 單獨顯示 ActionLoadingView
+                    // 因為相機載入有進行特別延遲顯示處理，用全局 ActionLoadingView 會進入分析頁面後還顯示
+                    if isCameraLoading {
                         ActionLoadingView()
+                            .onAppear {
+                                displayManager.isShowingTabBar = false
+                            }
                     }
                 }
                 .modelContainer(for: [TeaDisease.self])
@@ -262,6 +304,6 @@ struct HomepageView: View {
 }
 
 #Preview {
-    HomepageView()
+    HomepageView(bottomPadding: 20)
         .environmentObject(HistoryLimitManager())
 }
