@@ -51,4 +51,5 @@ struct TeaLeafInfoRow: View {
 
 #Preview {
     TeaLeafAnalysisView(photoPickerItem: nil, cameraImage: UIImage(named: "test_brown"))
+        .environmentObject(DisplayManager())
 }

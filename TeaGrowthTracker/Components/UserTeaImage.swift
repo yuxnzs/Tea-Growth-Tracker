@@ -35,4 +35,5 @@ struct UserTeaImage: View {
 
 #Preview {
     TeaLeafAnalysisView(photoPickerItem: nil, cameraImage: UIImage(named: "test"))
+        .environmentObject(DisplayManager())
 }
