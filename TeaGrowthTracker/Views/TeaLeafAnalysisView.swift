@@ -6,9 +6,9 @@ import CoreML
 struct TeaLeafAnalysisView: View {
     // 從 SwiftData 取得儲存的茶葉分析資料
     @Environment(\.modelContext) var modelContext
-    @Query var diseases: [TeaDisease]
     
     @EnvironmentObject var historyLimitManager: HistoryLimitManager
+    @EnvironmentObject var displayManager: DisplayManager
     
     @State private var predictionResult: String? = nil
     @State private var confidence: Double? = nil
@@ -82,7 +82,7 @@ struct TeaLeafAnalysisView: View {
                         Spacer() // 推開分析結果跟按鈕
                         
                         Button {
-                            if historyLimitManager.hasReachedLimit(diseaseCount: diseases.count) {
+                            if historyLimitManager.hasReachedLimit() {
                                 hasReachedLimit = true
                                 return
                             }
@@ -93,16 +93,22 @@ struct TeaLeafAnalysisView: View {
                             DispatchQueue.global().async {
                                 if let loadedImage = loadedImage, let predictionResult = predictionResult, let confidence = confidence {
                                     let newDisease = TeaDisease(teaImage: loadedImage, diseaseName: predictionResult, confidenceLevel: confidence)
-                                    modelContext.insert(newDisease)
-                                    do {
-                                        try modelContext.save()
-                                        DispatchQueue.main.async {
+                                    DispatchQueue.main.async {
+                                        do {
+                                            modelContext.insert(newDisease)
+                                            try modelContext.save()
+                                            
+                                            // 儲存成功
                                             hasSavedOnce = true
                                             hasSavedSuccessfully = true
-                                        }
-                                    } catch {
-                                        DispatchQueue.main.async {
-                                            hasSavedError = true
+                                            
+                                            // 更新紀錄數量與通知歷史頁面更新
+                                            historyLimitManager.incrementCount()
+                                            displayManager.hasNewDiseaseData = true
+                                        } catch {
+                                            DispatchQueue.main.async {
+                                                hasSavedError = true
+                                            }
                                         }
                                     }
                                 }
@@ -154,7 +160,7 @@ struct TeaLeafAnalysisView: View {
                         hasReachedLimit = false
                     }
                     NavigationLink {
-                        TeaDiseaseHistoryView()
+                        TeaDiseaseHistoryView(needReloadData: true)
                             .environmentObject(historyLimitManager)
                     } label: {
                         Text("前往紀錄頁面")
@@ -188,10 +194,18 @@ struct TeaLeafAnalysisView: View {
                     }
                 )
                 .frame(width: 0, height: 0) // 隱藏組件
+                .environmentObject(displayManager)
             }
-            .overlay {
-                if showActionLoading {
-                    ActionLoadingView()
+            .onChange(of: showActionLoading) { _, newValue in
+                if newValue {
+                    displayManager.showActionLoadingView = true
+                } else {
+                    displayManager.showActionLoadingView = false
+                }
+            }
+            .onAppear {
+                withAnimation {
+                    displayManager.isShowingTabBar = false
                 }
             }
             .ignoresSafeArea()
@@ -373,4 +387,5 @@ extension UIImage {
 #Preview {
     TeaLeafAnalysisView(photoPickerItem: nil, cameraImage: UIImage(named: "test_brown"))
         .environmentObject(HistoryLimitManager())
+        .environmentObject(DisplayManager())
 }
