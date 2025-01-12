@@ -3,8 +3,11 @@ import UIKit
 
 // 使用 UIKit 相機功能
 struct CameraView: UIViewControllerRepresentable {
+    @EnvironmentObject var displayManager: DisplayManager
     @Binding var image: UIImage?
     @Binding var isCameraLoading: Bool
+    
+    let showTabBarOnCameraCancel: Bool
     
     func makeCoordinator() -> Coordinator {
         return Coordinator(self)
@@ -49,6 +52,12 @@ struct CameraView: UIViewControllerRepresentable {
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             DispatchQueue.main.async {
                 self.parent.isCameraLoading = false
+                // 於首頁開啟相機並取消時，顯示 TabBar
+                if self.parent.showTabBarOnCameraCancel {
+                    withAnimation {
+                        self.parent.displayManager.isShowingTabBar = true
+                    }
+                }
             }
             picker.dismiss(animated: true)
         }
