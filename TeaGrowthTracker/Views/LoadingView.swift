@@ -3,6 +3,7 @@ import PhotosUI
 
 struct LoadingView: View {
     @EnvironmentObject var historyLimitManager: HistoryLimitManager
+    @EnvironmentObject var displayManager: DisplayManager
     @Binding var isOfflineModeEnabled: Bool
     // 茶葉病害分析
     @State private var isHistoryLoading = false
@@ -89,12 +90,14 @@ struct LoadingView: View {
                     }
                 }
             )
+            .environmentObject(displayManager)
         }
-        .overlay {
-            // 相機關閉後，正在載入所拍攝的照片時顯示
-            // 歷史分析結果頁面載入中時顯示
-            if isCameraLoading || isHistoryLoading {
-                ActionLoadingView()
+        // 相機關閉後，正在載入所拍攝的照片時顯示
+        .onChange(of: isCameraLoading) { _, newValue in
+            if newValue {
+                displayManager.showActionLoadingView = true
+            } else {
+                displayManager.showActionLoadingView = false
             }
         }
         .navigationDestination(isPresented: $showAnalysisPage) {
@@ -105,6 +108,7 @@ struct LoadingView: View {
                     photoPickerItem = nil
                 }
                 .environmentObject(historyLimitManager)
+                .environmentObject(displayManager)
         }
         .navigationDestination(isPresented: $showHistoryPage) {
             TeaDiseaseHistoryView()
@@ -121,4 +125,5 @@ struct LoadingView: View {
 #Preview {
     LoadingView(isOfflineModeEnabled: .constant(false))
         .environmentObject(HistoryLimitManager())
+        .environmentObject(DisplayManager())
 }
