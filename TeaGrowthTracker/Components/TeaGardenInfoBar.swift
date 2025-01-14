@@ -5,6 +5,8 @@ struct TeaGardenInfoBar: View {
     @EnvironmentObject var teaService: TeaService
     @EnvironmentObject var displayManager: DisplayManager
     
+    @State var gardenDidChange = false
+    
     @Binding var isTeaGardenSelectorViewPresented: Bool
     @Binding var needsRefreshData: Bool
     @Binding var isHistoryLoading: Bool
@@ -85,9 +87,18 @@ struct TeaGardenInfoBar: View {
                 .onTapGesture {
                     isTeaGardenSelectorViewPresented.toggle()
                 }
+                // 監聽茶園是否有被切換
+                .onChange(of: teaService.selectedToggle) { oldValue, newValue in
+                    if oldValue != newValue {
+                        gardenDidChange = true
+                    }
+                }
                 .sheet(isPresented: $isTeaGardenSelectorViewPresented, onDismiss: {
-                    // 關閉時，獲取新的茶園資料
-                    needsRefreshData = true
+                    // 當切換茶園時，才獲取新的茶園資料
+                    if gardenDidChange {
+                        needsRefreshData = true
+                        gardenDidChange = false
+                    }
                 }) {
                     TeaGardenSelectorView()
                         .environmentObject(teaService)
