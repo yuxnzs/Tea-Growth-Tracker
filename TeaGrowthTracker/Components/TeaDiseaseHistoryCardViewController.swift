@@ -71,6 +71,10 @@ class TeaDiseaseHistoryCardViewController: UIViewController {
         dateLabel.text = analysisDate
         dateLabel.font = .systemFont(ofSize: 13, weight: .bold)
         dateLabel.textColor = .white
+        dateLabel.layer.shadowColor = UIColor.black.cgColor
+        dateLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
+        dateLabel.layer.shadowOpacity = 0.5
+        dateLabel.layer.shadowRadius = 5
         
         cardContainer.addSubview(dateContainer)
         dateContainer.contentView.addSubview(dateLabel)
@@ -107,6 +111,10 @@ class TeaDiseaseHistoryCardViewController: UIViewController {
         exclamationMarkIcon.image = UIImage(systemName: "exclamationmark.triangle.fill")
         exclamationMarkIcon.tintColor = .white
         exclamationMarkIcon.contentMode = .scaleAspectFit
+        exclamationMarkIcon.layer.shadowColor = UIColor.black.cgColor
+        exclamationMarkIcon.layer.shadowOffset = CGSize(width: 1, height: 1)
+        exclamationMarkIcon.layer.shadowOpacity = 0.5
+        exclamationMarkIcon.layer.shadowRadius = 8
         
         // 疾病名稱與信心程度
         diseaseName.text = "\(self.diseaseName) •"
@@ -114,6 +122,10 @@ class TeaDiseaseHistoryCardViewController: UIViewController {
         [diseaseName, confidenceLevel].forEach {
             $0.font = .systemFont(ofSize: 18, weight: .bold)
             $0.textColor = .white
+            $0.layer.shadowColor = UIColor.black.cgColor
+            $0.layer.shadowOffset = CGSize(width: 1, height: 1)
+            $0.layer.shadowOpacity = 0.6
+            $0.layer.shadowRadius = 8
         }
         
         // 設定 AutoLayout
