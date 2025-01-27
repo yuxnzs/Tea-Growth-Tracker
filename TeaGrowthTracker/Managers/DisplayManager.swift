@@ -5,4 +5,5 @@ class DisplayManager: ObservableObject {
     @Published var showActionLoadingView = false
     @Published var hasNewDiseaseData = false
     @Published var needReloadHistoryPage = false
+    @Published var needReloadMap = false
 }
