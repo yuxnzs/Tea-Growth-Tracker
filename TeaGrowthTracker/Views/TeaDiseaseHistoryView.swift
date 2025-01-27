@@ -44,24 +44,15 @@ struct TeaDiseaseHistoryView: View {
                 }
                 // 有資料但還在載入
                 else if diseases.isEmpty {
-                    ProgressView()
-                        .padding(.top, 20)
+                    historyLimitRow()
+                    
+                    ForEach(0..<5) { _ in
+                        TeaDiseaseHistoryCardPlaceholder()
+                            .padding(.bottom, 10)
+                    }
                 } else {
                     // 目前儲存的紀錄數量和上限
-                    HStack(alignment: .bottom, spacing: 5) {
-                        Image(systemName: historyLimitManager.hasReachedLimit()
-                              ? "tray.full"
-                              : "tray")
-                        .font(.system(size: 17))
-                        .foregroundStyle(.secondary)
-                        
-                        // 格式：目前數量 / 上限，例如 1 / 20
-                        Text("\(historyLimitManager.currentHistoryCount) / \(historyLimitManager.historyLimit)")
-                            .font(.system(size: 15))
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: UIScreen.main.bounds.width - 40, alignment: .leading)
-                    .padding(.top, 10)
+                    historyLimitRow()
                     
                     VStack {
                         ForEach(Array(diseases.enumerated()), id: \.element.id) { index, disease in
@@ -152,6 +143,7 @@ struct TeaDiseaseHistoryView: View {
                                     _ = diseases.remove(at: indexToDelete) // 移除目前畫面上渲染出來的紀錄
                                 }
                                 historyLimitManager.decrementCount()
+                                displayManager.needReloadMap = true
                             } catch {
                                 deleteError = true
                             }
@@ -186,6 +178,7 @@ struct TeaDiseaseHistoryView: View {
                     }
                 }
             }
+            // 從茶葉分析頁面中進入（已達儲存上限）並離開後，需要重新載入資料
             .onDisappear {
                 if needReloadData {
                     displayManager.needReloadHistoryPage = true
@@ -224,6 +217,23 @@ struct TeaDiseaseHistoryView: View {
                 isLoadingMoreData = false
             }
         }
+    }
+    
+    func historyLimitRow() -> some View {
+        HStack(alignment: .bottom, spacing: 5) {
+            Image(systemName: historyLimitManager.hasReachedLimit()
+                  ? "tray.full"
+                  : "tray")
+            .font(.system(size: 17))
+            .foregroundStyle(.secondary)
+            
+            // 格式：目前數量 / 上限，例如 1 / 20
+            Text("\(historyLimitManager.currentHistoryCount) / \(historyLimitManager.historyLimit)")
+                .font(.system(size: 15))
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: UIScreen.main.bounds.width - 40, alignment: .leading)
+        .padding(.top, 10)
     }
 }
 
