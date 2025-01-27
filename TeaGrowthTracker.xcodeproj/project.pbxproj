@@ -41,7 +41,7 @@
 		CAD64C672CB0769A00DEF8D1 /* ActionLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD64C662CB0769A00DEF8D1 /* ActionLoadingView.swift */; };
 		CAD64C6B2CB2A07E00DEF8D1 /* TeaDiseaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD64C6A2CB2A07E00DEF8D1 /* TeaDiseaseModel.swift */; };
 		CAD64C6D2CB2A75900DEF8D1 /* TeaDiseaseHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD64C6C2CB2A75900DEF8D1 /* TeaDiseaseHistoryView.swift */; };
-		CAD64C6F2CB3A24500DEF8D1 /* TeaDiseaseHistoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD64C6E2CB3A24500DEF8D1 /* TeaDiseaseHistoryCard.swift */; };
+		CAD64C6F2CB3A24500DEF8D1 /* TeaDiseaseHistoryCardPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD64C6E2CB3A24500DEF8D1 /* TeaDiseaseHistoryCardPlaceholder.swift */; };
 		CAD64C742CB932F200DEF8D1 /* HistoryLimitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD64C732CB932F200DEF8D1 /* HistoryLimitManager.swift */; };
 		CADAF5CA2C283E2300A2E12A /* TeaGardenSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADAF5C92C283E2300A2E12A /* TeaGardenSelectorView.swift */; };
 		CADAF5CC2C2842C300A2E12A /* TeaGardenToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADAF5CB2C2842C300A2E12A /* TeaGardenToggle.swift */; };
@@ -83,7 +83,7 @@
 		CAD64C662CB0769A00DEF8D1 /* ActionLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionLoadingView.swift; sourceTree = "<group>"; };
 		CAD64C6A2CB2A07E00DEF8D1 /* TeaDiseaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaDiseaseModel.swift; sourceTree = "<group>"; };
 		CAD64C6C2CB2A75900DEF8D1 /* TeaDiseaseHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaDiseaseHistoryView.swift; sourceTree = "<group>"; };
-		CAD64C6E2CB3A24500DEF8D1 /* TeaDiseaseHistoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaDiseaseHistoryCard.swift; sourceTree = "<group>"; };
+		CAD64C6E2CB3A24500DEF8D1 /* TeaDiseaseHistoryCardPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaDiseaseHistoryCardPlaceholder.swift; sourceTree = "<group>"; };
 		CAD64C732CB932F200DEF8D1 /* HistoryLimitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryLimitManager.swift; sourceTree = "<group>"; };
 		CADAF5C92C283E2300A2E12A /* TeaGardenSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaGardenSelectorView.swift; sourceTree = "<group>"; };
 		CADAF5CB2C2842C300A2E12A /* TeaGardenToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaGardenToggle.swift; sourceTree = "<group>"; };
@@ -220,7 +220,7 @@
 				CABA9EED2CA94E4200773F59 /* LoadingPlaceholder.swift */,
 				CABA9EEF2CA94E5600773F59 /* PhotoSelectionButton.swift */,
 				CABA9EF52CA9712A00773F59 /* FullScreenButton.swift */,
-				CAD64C6E2CB3A24500DEF8D1 /* TeaDiseaseHistoryCard.swift */,
+				CAD64C6E2CB3A24500DEF8D1 /* TeaDiseaseHistoryCardPlaceholder.swift */,
 				CA3FC0D52CBAEDC60086E5D9 /* TeaGardenInfoBar.swift */,
 				CAB944EA2D2D6E1200948B6A /* TeaDiseaseHistoryCardViewController.swift */,
 			);
@@ -305,7 +305,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA448A112C202F4A0065EFE1 /* TeaService.swift in Sources */,
-				CAD64C6F2CB3A24500DEF8D1 /* TeaDiseaseHistoryCard.swift in Sources */,
+				CAD64C6F2CB3A24500DEF8D1 /* TeaDiseaseHistoryCardPlaceholder.swift in Sources */,
 				CABA9EF02CA94E5600773F59 /* PhotoSelectionButton.swift in Sources */,
 				CABA9EEA2CA94DD700773F59 /* TeaLeafInfoRow.swift in Sources */,
 				CAD64C742CB932F200DEF8D1 /* HistoryLimitManager.swift in Sources */,
