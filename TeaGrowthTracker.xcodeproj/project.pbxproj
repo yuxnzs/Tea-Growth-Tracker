@@ -26,6 +26,7 @@
 		CA6879322C1DDD3B007866DA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA6879312C1DDD3B007866DA /* Preview Assets.xcassets */; };
 		CA8BCFBD2CAA6990002F0119 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA8BCFBC2CAA6990002F0119 /* LaunchScreen.storyboard */; };
 		CA8F06F22D2E9E0F006449FB /* TeaDiseaseHistoryCardRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8F06F12D2E9E0F006449FB /* TeaDiseaseHistoryCardRepresentable.swift */; };
+		CA918F012D48EF8100D62FBE /* TeaDiseaseMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA918F002D48EF8100D62FBE /* TeaDiseaseMapView.swift */; };
 		CAA9305C2C1EFFFA005BF058 /* RecentAnalysisPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9305B2C1EFFFA005BF058 /* RecentAnalysisPreview.swift */; };
 		CAB944EB2D2D6E1200948B6A /* TeaDiseaseHistoryCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB944EA2D2D6E1200948B6A /* TeaDiseaseHistoryCardViewController.swift */; };
 		CABA9EE62CA94D6200773F59 /* TeaLeafAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABA9EE52CA94D6200773F59 /* TeaLeafAnalysisView.swift */; };
@@ -68,6 +69,7 @@
 		CA6879312C1DDD3B007866DA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		CA8BCFBC2CAA6990002F0119 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CA8F06F12D2E9E0F006449FB /* TeaDiseaseHistoryCardRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaDiseaseHistoryCardRepresentable.swift; sourceTree = "<group>"; };
+		CA918F002D48EF8100D62FBE /* TeaDiseaseMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaDiseaseMapView.swift; sourceTree = "<group>"; };
 		CAA9305B2C1EFFFA005BF058 /* RecentAnalysisPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentAnalysisPreview.swift; sourceTree = "<group>"; };
 		CAB944EA2D2D6E1200948B6A /* TeaDiseaseHistoryCardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaDiseaseHistoryCardViewController.swift; sourceTree = "<group>"; };
 		CABA9EE52CA94D6200773F59 /* TeaLeafAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaLeafAnalysisView.swift; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				CAD64C662CB0769A00DEF8D1 /* ActionLoadingView.swift */,
 				CAD64C6C2CB2A75900DEF8D1 /* TeaDiseaseHistoryView.swift */,
 				CA2A5B5D2D3037310009002E /* HomepageView.swift */,
+				CA918F002D48EF8100D62FBE /* TeaDiseaseMapView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -339,6 +342,7 @@
 				CA68792B2C1DDD38007866DA /* TeaGrowthTrackerApp.swift in Sources */,
 				CAE6A1E22C21D984006A64A9 /* AnalysisImage.swift in Sources */,
 				CABA9EE82CA94D7F00773F59 /* ActionButton.swift in Sources */,
+				CA918F012D48EF8100D62FBE /* TeaDiseaseMapView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
