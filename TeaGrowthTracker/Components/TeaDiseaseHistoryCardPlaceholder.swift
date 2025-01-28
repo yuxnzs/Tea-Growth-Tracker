@@ -51,5 +51,5 @@ struct TeaDiseaseHistoryCardPlaceholder: View {
 }
 
 #Preview {
-    TeaDiseaseHistoryCard()
+    TeaDiseaseHistoryCardPlaceholder()
 }
