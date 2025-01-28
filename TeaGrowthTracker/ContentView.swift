@@ -21,6 +21,13 @@ struct ContentView: View {
                     Label("歷史", systemImage: "clock")
                 }
                 .toolbar(displayManager.isShowingTabBar ? .visible : .hidden, for: .tabBar)
+            
+            TeaDiseaseMapView()
+                .environmentObject(displayManager)
+                .tabItem {
+                    Label("地圖", systemImage: "map")
+                }
+                .toolbar(displayManager.isShowingTabBar ? .visible : .hidden, for: .tabBar)
         }
         .overlay {
             if displayManager.showActionLoadingView {
