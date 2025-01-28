@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 import CoreML
+import ImageIO
 
 struct TeaLeafAnalysisView: View {
     // 從 SwiftData 取得儲存的茶葉分析資料
@@ -9,6 +10,13 @@ struct TeaLeafAnalysisView: View {
     
     @EnvironmentObject var historyLimitManager: HistoryLimitManager
     @EnvironmentObject var displayManager: DisplayManager
+    
+    @StateObject private var locationManager = LocationManager()
+    @State private var latitude: Double? = nil
+    @State private var longitude: Double? = nil
+    @State private var isFetchingLocation = false
+    @State private var showFetchingLocationAlert = false
+    @State private var isLocationFetchSuccessful = false
     
     @State private var predictionResult: String? = nil
     @State private var confidence: Double? = nil
@@ -87,12 +95,17 @@ struct TeaLeafAnalysisView: View {
                                 return
                             }
                             
+                            if isFetchingLocation {
+                                showFetchingLocationAlert = true
+                                return
+                            }
+                            
                             showActionLoading = true
                             
                             // 避免阻塞主線程導致畫面卡頓
                             DispatchQueue.global().async {
                                 if let loadedImage = loadedImage, let predictionResult = predictionResult, let confidence = confidence {
-                                    let newDisease = TeaDisease(teaImage: loadedImage, diseaseName: predictionResult, confidenceLevel: confidence)
+                                    let newDisease = TeaDisease(teaImage: loadedImage, diseaseName: predictionResult, confidenceLevel: confidence, longitude: longitude, latitude: latitude)
                                     DispatchQueue.main.async {
                                         do {
                                             modelContext.insert(newDisease)
@@ -105,6 +118,8 @@ struct TeaLeafAnalysisView: View {
                                             // 更新紀錄數量與通知歷史頁面更新
                                             historyLimitManager.incrementCount()
                                             displayManager.hasNewDiseaseData = true
+                                            // 通知地圖更新
+                                            displayManager.needReloadMap = true
                                         } catch {
                                             DispatchQueue.main.async {
                                                 hasSavedError = true
@@ -145,27 +160,38 @@ struct TeaLeafAnalysisView: View {
                 .onAppear {
                     loadImageFromUser()
                 }
-                .alert("分析結果已儲存", isPresented: $hasSavedSuccessfully) {
-                    Button("確定") {
-                        hasSavedSuccessfully = false
-                    }
+                .alert(isPresented: $showFetchingLocationAlert) {
+                    Alert(
+                        title: Text("正在取得位置資訊"),
+                        message: Text("請稍候再試，完成後將顯示於病害地圖"),
+                        dismissButton: .default(Text("確定"))
+                    )
                 }
-                .alert("分析結果儲存錯誤，請再試一次", isPresented: $hasSavedError) {
-                    Button("確定") {
-                        hasSavedError = false
+                .alert(
+                    isLocationFetchSuccessful 
+                    ? "分析結果已儲存\n已同步至病害地圖"
+                    : "分析結果已儲存",
+                    isPresented: $hasSavedSuccessfully) {
+                        Button("確定") {
+                            hasSavedSuccessfully = false
+                        }
                     }
-                }
-                .alert("已達儲存上限，請刪除部分紀錄後再試一次", isPresented: $hasReachedLimit) {
-                    Button("關閉") {
-                        hasReachedLimit = false
+                    .alert("分析結果儲存錯誤，請再試一次", isPresented: $hasSavedError) {
+                        Button("確定") {
+                            hasSavedError = false
+                        }
                     }
-                    NavigationLink {
-                        TeaDiseaseHistoryView(needReloadData: true)
-                            .environmentObject(historyLimitManager)
-                    } label: {
-                        Text("前往紀錄頁面")
+                    .alert("已達儲存上限，請刪除部分紀錄後再試一次", isPresented: $hasReachedLimit) {
+                        Button("關閉") {
+                            hasReachedLimit = false
+                        }
+                        NavigationLink {
+                            TeaDiseaseHistoryView(needReloadData: true)
+                                .environmentObject(historyLimitManager)
+                        } label: {
+                            Text("前往紀錄頁面")
+                        }
                     }
-                }
             }
             .overlay {
                 PhotoSelectionButton(
@@ -223,11 +249,36 @@ struct TeaLeafAnalysisView: View {
         hasSavedSuccessfully = false
         hasSavedError = false
         hasReachedLimit = false
+        isFetchingLocation = false
+        showFetchingLocationAlert = false
+        isLocationFetchSuccessful = false
     }
     
     func loadImageFromUser() {
         if let image = cameraImage {
-            // 如果有直接的 UIImage（來自相機），直接使用
+            isFetchingLocation = true
+            // 設置位置更新的 closure
+            locationManager.onLocationUpdate = { location in
+                if let location = location {
+                    // 更新位置
+                    latitude = location.coordinate.latitude
+                    longitude = location.coordinate.longitude
+                    isFetchingLocation = false
+                    isLocationFetchSuccessful = true
+                } else {
+                    print("無法取得位置")
+                    // 避免位置為 nil 時，繼續使用上次的位置
+                    longitude = nil
+                    latitude = nil
+                    isFetchingLocation = false
+                    isLocationFetchSuccessful = false
+                }
+            }
+            
+            // 請求位置，於 didUpdateLocations 內更新位置
+            locationManager.requestLocation()
+            
+            // 如果有 UIImage（來自相機），直接使用
             DispatchQueue.main.async {
                 loadedImage = image
             }
@@ -236,10 +287,27 @@ struct TeaLeafAnalysisView: View {
                 isLoading = false
             }
         } else if let photoPickerItem = photoPickerItem {
+            isFetchingLocation = true
             // 從 photoPickerItem 載入圖片
             Task {
                 if let data = try? await photoPickerItem.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data) {
+                    
+                    // 解析 EXIF (包含 GPS)
+                    if let gpsInfo = extractGPSInfo(from: data) {
+                        latitude = gpsInfo.latitude
+                        longitude = gpsInfo.longitude
+                        isFetchingLocation = false
+                        isLocationFetchSuccessful = true
+                    } else {
+                        print("沒有 GPS EXIF 或解析失敗")
+                        // 避免位置為 nil 時，繼續使用上次的位置
+                        longitude = nil
+                        latitude = nil
+                        isFetchingLocation = false
+                        isLocationFetchSuccessful = false
+                    }
+                    
                     DispatchQueue.main.async {
                         loadedImage = uiImage
                     }
@@ -262,6 +330,40 @@ struct TeaLeafAnalysisView: View {
                 isLoading = false
             }
         }
+    }
+    
+    // 從圖片 Data 解析出 GPS 經緯度資訊
+    func extractGPSInfo(from imageData: Data) -> (latitude: Double, longitude: Double)? {
+        guard let source = CGImageSourceCreateWithData(imageData as CFData, nil) else {
+            return nil
+        }
+        guard let metadata = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any] else {
+            return nil
+        }
+        
+        // kCGImagePropertyGPSDictionary 是一個字典，裡面包含經度/緯度等
+        if let gpsDict = metadata[kCGImagePropertyGPSDictionary as String] as? [String: Any] {
+            if let lat = gpsDict[kCGImagePropertyGPSLatitude as String] as? Double,
+               let lon = gpsDict[kCGImagePropertyGPSLongitude as String] as? Double {
+                // 有些照片還會記載 GPSLatitudeRef / GPSLongitudeRef (N / S / E / W)
+                // 可能需要根據 Ref 轉換正負號
+                var finalLat = lat
+                var finalLon = lon
+                
+                // 如果有參考方向，就進行 N/S/E/W 處理
+                if let latRef = gpsDict[kCGImagePropertyGPSLatitudeRef as String] as? String,
+                   latRef.uppercased() == "S" {
+                    finalLat = -finalLat
+                }
+                if let lonRef = gpsDict[kCGImagePropertyGPSLongitudeRef as String] as? String,
+                   lonRef.uppercased() == "W" {
+                    finalLon = -finalLon
+                }
+                
+                return (latitude: finalLat, longitude: finalLon)
+            }
+        }
+        return nil
     }
     
     func runModelTest(image: UIImage) {
