@@ -64,16 +64,6 @@ struct TeaDiseaseHistoryView: View {
                                     useUIImage: true,
                                     uiImage: disease.teaImage
                                 )
-                                .onAppear {
-                                    withAnimation {
-                                        displayManager.isShowingTabBar = false
-                                    }
-                                }
-                                .onDisappear {
-                                    withAnimation {
-                                        displayManager.isShowingTabBar = true
-                                    }
-                                }
                             } label: {
                                 TeaDiseaseHistoryCardRepresentable(
                                     teaImage: disease.teaImage,
