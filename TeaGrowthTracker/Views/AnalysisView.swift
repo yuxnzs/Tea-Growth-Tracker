@@ -68,7 +68,11 @@ struct AnalysisView: View {
                             .padding(.leading, 20)
                             .padding(.vertical, 14)
                         
-                        DataGrid(teaData: teaData)
+                        DataGrid(
+                            titles: ["日期", "天氣", "生長率參考值", "種植程度"],
+                            values: [teaData.date, teaData.weather, teaData.growth, teaData.plantingRate],
+                            isTeaData: true
+                        )
                             .padding(.horizontal, 20)
                     }
                     .padding(.bottom, isSheet ? -20 : UIScreen.main.bounds.height / 20)
