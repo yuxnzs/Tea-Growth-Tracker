@@ -1,28 +1,42 @@
 import SwiftUI
 
 struct DataGrid: View {
-    let teaData: TeaData
+    let titles: [String]
+    let values: [String]
+    let isTeaData: Bool
+    
+    init(titles: [String], values: [String], isTeaData: Bool = false) {
+        self.titles = titles
+        self.values = values
+        self.isTeaData = isTeaData
+    }
     
     var body: some View {
         VStack(spacing: 20) {
             HStack(spacing: 6) {
-                DataCard(title: "日期", date: teaData.date)
+                DataCard(title: titles[0], data: values[0], needSmallerSize: isTeaData)
                 
                 Spacer()
                 
-                let (weatherIcon, weatherColor) = getWeatherIconAndColor(weather: teaData.weather)
-                DataCard(title: "天氣",
-                         weatherIcon: weatherIcon,
-                         weatherColor: weatherColor)
+                if isTeaData {
+                    let (weatherIcon, weatherColor) = getWeatherIconAndColor(weather: values[1])
+                    DataCard(
+                        title: titles[1],
+                        weatherIcon: weatherIcon,
+                        weatherColor: weatherColor
+                    )
+                } else {
+                    DataCard(title: titles[1], data: values[1])
+                }
             }
             .frame(maxWidth: .infinity)
             
             HStack(spacing: 6) {
-                DataCard(title: "生長率參考值", growth: teaData.growth)
+                DataCard(title: titles[2], data: values[2])
                 
                 Spacer()
                 
-                DataCard(title: "種植程度", plantingRate: teaData.plantingRate)
+                DataCard(title: titles[3], data: values[3])
             }
             .frame(maxWidth: .infinity)
         }
@@ -47,15 +61,9 @@ struct DataGrid: View {
 
 #Preview {
     DataGrid(
-        teaData: TeaData(
-            area: "A",
-            originalImage: "https://images.unsplash.com/photo-1605105777592-c3430a67d033?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            analyzedImage: "https://images.unsplash.com/photo-1605105777592-c3430a67d033?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            date: "2024-06-01",
-            weather: "雨",
-            growth: "90%",
-            plantingRate: "高"
-        )
+        titles: ["日期", "天氣", "生長率參考值", "種植程度"],
+        values: ["2024-06-01", "雨", "90%", "高"],
+        isTeaData: true
     )
 }
 

@@ -2,19 +2,17 @@ import SwiftUI
 
 struct DataCard: View {
     let title: String
-    let date: String?
+    let data: String?
     let weatherIcon: String?
     let weatherColor: Color?
-    let growth: String?
-    let plantingRate: String?
+    let needSmallerSize: Bool
     
-    init(title: String, date: String? = nil, weatherIcon: String? = nil, weatherColor: Color? = nil, growth: String? = nil, plantingRate: String? = nil) {
+    init(title: String, data: String? = nil, weatherIcon: String? = nil, weatherColor: Color? = nil, needSmallerSize: Bool = false) {
         self.title = title
-        self.date = date
+        self.data = data
         self.weatherIcon = weatherIcon
         self.weatherColor = weatherColor
-        self.growth = growth
-        self.plantingRate = plantingRate
+        self.needSmallerSize = needSmallerSize
     }
     
     var body: some View {
@@ -30,12 +28,6 @@ struct DataCard: View {
             
             // 資料
             VStack {
-                if let date = date {
-                    Text(date)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                }
-                
                 if let weatherIcon = weatherIcon, let weatherColor = weatherColor {
                     Image(systemName: weatherIcon)
                         .resizable()
@@ -44,15 +36,9 @@ struct DataCard: View {
                         .foregroundStyle(weatherColor)
                 }
                 
-                if let growth = growth {
-                    Text(growth)
-                        .font(.title)
-                        .fontWeight(.bold)
-                }
-                
-                if let plantingRate = plantingRate {
-                    Text(plantingRate)
-                        .font(.title)
+                if let data = data {
+                    Text(data)
+                        .font(needSmallerSize ? .title2 : .title)
                         .fontWeight(.bold)
                 }
             }
@@ -66,12 +52,6 @@ struct DataCard: View {
 }
 
 #Preview() {
-    DataCard(title: "生長率參考值",
-//            date: "2021-09-01"
-//            weather: "cloud.sun",
-//            weatherColor: .yellow
-            growth: "95 %"
-//            plantingRate: "高"
-    )
-    .padding()
+    DataCard(title: "生長率參考值", data: "95 %")
+        .padding()
 }
