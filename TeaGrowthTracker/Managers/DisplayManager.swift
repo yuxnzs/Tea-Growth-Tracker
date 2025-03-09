@@ -6,4 +6,5 @@ class DisplayManager: ObservableObject {
     @Published var hasNewDiseaseData = false
     @Published var needReloadHistoryPage = false
     @Published var needReloadMap = false
+    @Published var isGardenChanged = true
 }

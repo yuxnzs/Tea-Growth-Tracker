@@ -98,6 +98,7 @@ struct TeaGardenInfoBar: View {
                     if gardenDidChange {
                         needsRefreshData = true
                         gardenDidChange = false
+                        displayManager.isGardenChanged = true
                     }
                 }) {
                     TeaGardenSelectorView()

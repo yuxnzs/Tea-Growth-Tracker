@@ -3,6 +3,7 @@ import MapKit
 import SwiftData
 
 struct TeaDiseaseMapView: View {
+    @AppStorage("selectedToggle") var selectedToggle: Int = 1
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme // 深淺色模式切換
     @EnvironmentObject var displayManager: DisplayManager
@@ -115,6 +116,23 @@ struct TeaDiseaseMapView: View {
                 
                 // 取得使用者目前位置
                 CLLocationManager().requestWhenInUseAuthorization()
+                
+                // 切換茶園時地圖顯示位置才會改變
+                if displayManager.isGardenChanged {
+                    // 地圖預設顯示茶園位置
+                    Task { @MainActor in
+                        if let location = Config.teaGardenLocations[selectedToggle] {
+                            userPosition = .region(
+                                MKCoordinateRegion(
+                                    center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
+                                    span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
+                                )
+                            )
+                        }
+                    }
+                    
+                    displayManager.isGardenChanged = false
+                }
                 
                 if diseases.isEmpty || displayManager.needReloadMap {
                     diseases.removeAll()
