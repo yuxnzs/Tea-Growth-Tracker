@@ -5,10 +5,14 @@ struct HomepageView: View {
     @StateObject var teaService = TeaService()
     @EnvironmentObject var historyLimitManager: HistoryLimitManager
     @EnvironmentObject var displayManager: DisplayManager
+    var weatherService = WeatherService()
     
     // 剛開啟 App 時取得後端資料，取得完畢再顯示
     @State var isLoading: Bool = true
     @State var firstAppear: Bool = false
+    
+    // 天氣資料
+    @State private var weatherData: Weather?
     
     // 控制 Alert 顯示
     @State private var isError: Bool = false
@@ -64,129 +68,121 @@ struct HomepageView: View {
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
-                        // 取得最近一次資料
-                        if let latestTeaData = teaService.teaGardenData.last?.teaData.first {
-                            ScrollView {
-                                TeaGardenInfoBar(
-                                    teaGardenName: teaService.teaGardenData.last!.name,
-                                    teaGardenLocation: teaService.teaGardenData.last!.location,
-                                    isPlaceholder: true
-                                )
-                                .padding(.bottom, 7)
-                                .environmentObject(teaService)
-                                
-                                VStack(spacing: 16) {
-                                    // 最近一次分析結果
-                                    VStack {
-                                        NavigationLink {
-                                            AnalysisView(teaData: latestTeaData)
-                                        } label: {
-                                            HStack {
-                                                Text("最近一次分析結果")
-                                                    .font(.system(size: 25))
-                                                    .fontWeight(.bold)
-                                                
-                                                Spacer()
-                                                
-                                                Image(systemName: "arrow.right")
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: 20, height: 20)
-                                                    .foregroundStyle(.gray)
-                                            }
-                                        }
-                                        .padding(.horizontal, 20)
-                                        // 去除 NavigationLink label 內的藍色
-                                        .buttonStyle(.plain)
-                                        
-                                        DataGrid(teaData: latestTeaData)
-                                            .padding(.horizontal, 20)
-                                    }
-                                    
-                                    // 歷史分析結果
-                                    VStack {
-                                        NavigationLink {
-                                            AreaListView()
-                                                .environmentObject(teaService)
-                                                .environmentObject(displayManager)
-                                        } label: {
-                                            HStack {
-                                                Text("歷史分析結果")
-                                                    .font(.system(size: 25))
-                                                    .fontWeight(.bold)
-                                                
-                                                Spacer()
-                                                
-                                                Image(systemName: "arrow.right")
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: 20, height: 20)
-                                                    .foregroundStyle(.gray)
-                                            }
-                                        }
-                                        .padding(.horizontal, 20)
-                                        .buttonStyle(.plain)
-                                        
-                                        ScrollView(.horizontal, showsIndicators: false) {
-                                            HStack {
-                                                // teaService.teaModel 是一個陣列，所以要用 flatMap 來取得一個元素
-                                                // 再透過該元素取得 teaData 陣列
-                                                // teaService.teaModel.compactMap 的 $0 為一個 TeaModel 物件
-                                                // first 取得 A 區
-                                                ForEach(teaService.teaGardenData.compactMap { $0.teaData.prefix(3).first }.reversed()) { teaData in
-                                                    RecentAnalysisPreview(teaData: teaData)
-                                                        .padding(.trailing, 15)
-                                                    // 傳 teaData 的前三項分析資料給 RecentAnalysisPreview 顯示
-                                                        .onTapGesture {
-                                                            selectedTeaData = teaData
-                                                        }
-                                                    // 使用 isPresented 來控制 sheet 顯示
-                                                    // 會因為狀態同步問題導致顯示錯誤的數據
-                                                    // 所以改用 item，因為 item 綁定的是具體的數據物件
-                                                    // item 有值時顯示
-                                                        .sheet(item: $selectedTeaData) { teaData in
-                                                            AnalysisView(teaData: teaData, isSheet: true)
-                                                        }
-                                                }
-                                            }
-                                            .padding(.leading, 20)
-                                        }
-                                    }
-                                    .padding(.bottom, bottomPadding)
-                                }
-                            }
-                            .onAppear {
-                                // 啟動 App 進入到首頁時，不需要動畫出現底部導航列
-                                if firstAppear {
-                                    displayManager.isShowingTabBar = true
-                                    firstAppear = false
-                                } else {
-                                    withAnimation {
-                                        // 當首頁出現時，顯示底部導航列
-                                        displayManager.isShowingTabBar = true
-                                    }
-                                }
-                            }
-                            
-                            // 頂部資訊欄
+                        ScrollView {
                             TeaGardenInfoBar(
-                                isTeaGardenSelectorViewPresented: $isTeaGardenSelectorViewPresented,
-                                needsRefreshData: $needsRefreshData,
-                                isHistoryLoading: $isHistoryLoading,
-                                showHistoryPage: $showHistoryPage,
-                                isCameraLoading: $isCameraLoading,
-                                showOptions: $showOptions,
-                                showPhotoPicker: $showPhotoPicker,
-                                showCamera: $showCamera,
-                                photoPickerItem: $photoPickerItem,
-                                cameraImage: $cameraImage,
-                                showAnalysisPage: $showAnalysisPage,
                                 teaGardenName: teaService.teaGardenData.last!.name,
-                                teaGardenLocation: teaService.teaGardenData.last!.location
+                                teaGardenLocation: teaService.teaGardenData.last!.location,
+                                isPlaceholder: true
                             )
+                            .padding(.bottom, 7)
                             .environmentObject(teaService)
-                            .environmentObject(displayManager)
+                            
+                            VStack(spacing: 16) {
+                                // 最近一次分析結果
+                                VStack {
+                                    HStack {
+                                        Text("茶園即時環境數據")
+                                            .font(.system(size: 25))
+                                            .fontWeight(.bold)
+                                    }
+                                    .padding(.horizontal, 20)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    
+                                    DataGrid(
+                                        titles: ["天氣情況", "溫度", "濕度", "風速"],
+                                        values: [
+                                            "\(weatherData?.weatherCondition ?? "未知")",
+                                            "\(weatherData?.temperature ?? "--") °C",
+                                            "\(weatherData?.humidity ?? "--") %",
+                                            "\(weatherData?.windSpeed ?? "--") m/s"
+                                        ]
+                                    )
+                                    .padding(.horizontal, 20)
+                                }
+                                
+                                // 歷史分析結果
+                                VStack {
+                                    NavigationLink {
+                                        AreaListView()
+                                            .environmentObject(teaService)
+                                            .environmentObject(displayManager)
+                                    } label: {
+                                        HStack {
+                                            Text("歷史分析結果")
+                                                .font(.system(size: 25))
+                                                .fontWeight(.bold)
+                                            
+                                            Spacer()
+                                            
+                                            Image(systemName: "arrow.right")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundStyle(.gray)
+                                        }
+                                    }
+                                    .padding(.horizontal, 20)
+                                    .buttonStyle(.plain)
+                                    
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        HStack {
+                                            // teaService.teaModel 是一個陣列，所以要用 flatMap 來取得一個元素
+                                            // 再透過該元素取得 teaData 陣列
+                                            // teaService.teaModel.compactMap 的 $0 為一個 TeaModel 物件
+                                            // first 取得 A 區
+                                            ForEach(teaService.teaGardenData.compactMap { $0.teaData.prefix(3).first }.reversed()) { teaData in
+                                                RecentAnalysisPreview(teaData: teaData)
+                                                    .padding(.trailing, 15)
+                                                // 傳 teaData 的前三項分析資料給 RecentAnalysisPreview 顯示
+                                                    .onTapGesture {
+                                                        selectedTeaData = teaData
+                                                    }
+                                                // 使用 isPresented 來控制 sheet 顯示
+                                                // 會因為狀態同步問題導致顯示錯誤的數據
+                                                // 所以改用 item，因為 item 綁定的是具體的數據物件
+                                                // item 有值時顯示
+                                                    .sheet(item: $selectedTeaData) { teaData in
+                                                        AnalysisView(teaData: teaData, isSheet: true)
+                                                    }
+                                            }
+                                        }
+                                        .padding(.leading, 20)
+                                    }
+                                }
+                                .padding(.bottom, bottomPadding)
+                            }
                         }
+                        .onAppear {
+                            // 啟動 App 進入到首頁時，不需要動畫出現底部導航列
+                            if firstAppear {
+                                displayManager.isShowingTabBar = true
+                                firstAppear = false
+                            } else {
+                                withAnimation {
+                                    // 當首頁出現時，顯示底部導航列
+                                    displayManager.isShowingTabBar = true
+                                }
+                            }
+                        }
+                        
+                        // 頂部資訊欄
+                        TeaGardenInfoBar(
+                            isTeaGardenSelectorViewPresented: $isTeaGardenSelectorViewPresented,
+                            needsRefreshData: $needsRefreshData,
+                            isHistoryLoading: $isHistoryLoading,
+                            showHistoryPage: $showHistoryPage,
+                            isCameraLoading: $isCameraLoading,
+                            showOptions: $showOptions,
+                            showPhotoPicker: $showPhotoPicker,
+                            showCamera: $showCamera,
+                            photoPickerItem: $photoPickerItem,
+                            cameraImage: $cameraImage,
+                            showAnalysisPage: $showAnalysisPage,
+                            teaGardenName: teaService.teaGardenData.last!.name,
+                            teaGardenLocation: teaService.teaGardenData.last!.location
+                        )
+                        .environmentObject(teaService)
+                        .environmentObject(displayManager)
                     }
                     
                     if !isLoading {
@@ -278,10 +274,17 @@ struct HomepageView: View {
     }
     
     func fetchTeaData(skipDelay: Bool = false) async {
+        @AppStorage("selectedToggle") var selectedToggle: Int = 1
         let startTime = Date()
         
         do {
             try await teaService.fetchTeaData()
+            if let location = Config.teaGardenLocations[selectedToggle] {
+                weatherData = try await weatherService.fetchHomepageWeatherData(
+                    latitude: location.latitude,
+                    longitude: location.longitude
+                )
+            }
             let endTime = Date()
             let timeInterval = endTime.timeIntervalSince(startTime)
             
@@ -306,4 +309,5 @@ struct HomepageView: View {
 #Preview {
     HomepageView(bottomPadding: 20)
         .environmentObject(HistoryLimitManager())
+        .environmentObject(DisplayManager())
 }
