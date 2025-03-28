@@ -3,6 +3,7 @@ import SwiftData
 import PhotosUI
 import CoreML
 import ImageIO
+import MarkdownUI
 
 struct TeaLeafAnalysisView: View {
     // 從 SwiftData 取得儲存的茶葉分析資料
@@ -26,6 +27,10 @@ struct TeaLeafAnalysisView: View {
     @State private var isImageError = false
     @State private var isResultError = false
     
+    @State private var aiSuggestion: String? = nil
+    @State private var showAiSuggestion = false
+    @State private var isAiSuggestionLoading = false
+    
     @State private var showOptions = false
     @State private var showPhotoPicker = false
     @State private var showCamera = false
@@ -38,6 +43,9 @@ struct TeaLeafAnalysisView: View {
     @State private var hasSavedError = false
     @State private var hasReachedLimit = false
     @State private var showActionLoading = false
+    
+    @State private var isGPT4o = false
+    @State private var isGPTSheetPresented = false
     
     let containerWidth = UIScreen.main.bounds.width - 40
     // 病害類別名稱，用來對照模型結果
@@ -57,10 +65,21 @@ struct TeaLeafAnalysisView: View {
                 ScrollView {
                     // 分析結果與按鈕
                     VStack(spacing: 0) {
-                        Text("茶葉分析結果")
-                            .frame(width: containerWidth, alignment: .leading)
-                            .font(.system(size: 25, weight: .bold))
-                            .padding(.vertical, 14)
+                        Button {
+                            isGPTSheetPresented = true
+                        } label: {
+                            headingText("茶葉分析結果")
+                        }
+                        .buttonStyle(.plain)
+                        .sheet(isPresented: $isGPTSheetPresented) {
+                            Toggle("使用 GPT-4o", isOn: $isGPT4o)
+                                .padding()
+                                .background(Color(.systemGray6))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .padding(.horizontal)
+                                .presentationDetents([.fraction(0.2)])
+                                .presentationDragIndicator(.visible)
+                        }
                         
                         TeaLeafInfoRow(
                             isImageError: isImageError,
@@ -81,6 +100,20 @@ struct TeaLeafAnalysisView: View {
                                 content: confidence.map { "\(String(format: "%.2f", $0))%" },
                                 containerWidth: containerWidth
                             )
+                            
+                            // AI 管理建議
+                            if showAiSuggestion {
+                                headingText("AI 管理建議 ✨")
+                                if isAiSuggestionLoading {
+                                    aiSuggestionPlaceholder(height: 23)
+                                } else {
+                                    Markdown(aiSuggestion ?? "無法取得 AI 建議，請稍後再試。")
+                                        .font(.system(size: 20))
+                                        .frame(width: containerWidth, alignment: .leading)
+                                        .padding(.bottom, 28)
+                                        .textSelection(.enabled)
+                                }
+                            }
                         } else {
                             // AiTeaLeafInfoRow 高度 + Padding
                             Spacer()
@@ -88,6 +121,29 @@ struct TeaLeafAnalysisView: View {
                         }
                         
                         Spacer() // 推開分析結果跟按鈕
+                        
+                        if !isImageError && !isResultError {
+                            Button {
+                                Task {
+                                    withAnimation {
+                                        showAiSuggestion = true
+                                    }
+                                    await fetchAiSuggestion(
+                                        diseaseName: predictionResult ?? "",
+                                        confidenceLevel: confidence.map { String(format: "%.2f", $0) } ?? "0.00"
+                                    )
+                                }
+                            } label: {
+                                ActionButton(
+                                    title: "✨ 獲取 AI 管理建議",
+                                    buttonWidth: containerWidth,
+                                    backgroundColor: Color(red: 0.671, green: 0.408, blue: 1.0),
+                                    foregroundColor: .white
+                                )
+                            }
+                            .padding(.bottom, 10)
+                            .disabled(isLoading || isAiSuggestionLoading)
+                        }
                         
                         Button {
                             if historyLimitManager.hasReachedLimit() {
@@ -154,8 +210,9 @@ struct TeaLeafAnalysisView: View {
                             )
                         }
                         .disabled(isLoading)
+                        .padding(.bottom, 30)
                     }
-                    .frame(height: UIScreen.main.bounds.height - 380) // 螢幕高度 - 圖片高度 + 一點底部間距
+                    .frame(minHeight: UIScreen.main.bounds.height - 350) // 螢幕高度 - 圖片高度 + 一點底部間距
                 }
                 .onAppear {
                     loadImageFromUser()
@@ -168,7 +225,7 @@ struct TeaLeafAnalysisView: View {
                     )
                 }
                 .alert(
-                    isLocationFetchSuccessful 
+                    isLocationFetchSuccessful
                     ? "分析結果已儲存\n已同步至病害地圖"
                     : "分析結果已儲存",
                     isPresented: $hasSavedSuccessfully) {
@@ -252,6 +309,8 @@ struct TeaLeafAnalysisView: View {
         isFetchingLocation = false
         showFetchingLocationAlert = false
         isLocationFetchSuccessful = false
+        showAiSuggestion = false
+        aiSuggestion = nil
     }
     
     func loadImageFromUser() {
@@ -409,6 +468,92 @@ struct TeaLeafAnalysisView: View {
                 isLoading = false
             }
         }
+    }
+    
+    // 透過 API 取得 AI 管理建議
+    func fetchAiSuggestion(diseaseName: String, confidenceLevel: String) async {
+        withAnimation {
+            isAiSuggestionLoading = true
+            aiSuggestion = nil
+        }
+        
+        @AppStorage("selectedToggle") var selectedToggle: Int = 1
+        
+        let baseURL: String = Config.baseURL
+        
+        guard let location = Config.teaGardenLocations[selectedToggle] else {
+            DispatchQueue.main.async {
+                withAnimation {
+                    isAiSuggestionLoading = false
+                }
+            }
+            return
+        }
+        
+        guard let url = URL(string: "\(baseURL)/ai-disease-suggestion/\(diseaseName)/\(confidenceLevel)/\(location.latitude)/\(location.longitude)/\(isGPT4o)") else {
+            DispatchQueue.main.async {
+                withAnimation {
+                    isAiSuggestionLoading = false
+                }
+            }
+            return
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            // 檢查 API 是否成功
+            if let response = response as? HTTPURLResponse, response.statusCode != 200 {
+                withAnimation {
+                    isAiSuggestionLoading = false
+                }
+                return
+            }
+                
+            DispatchQueue.main.async {
+                withAnimation {
+                    aiSuggestion = String(data: data, encoding: .utf8)
+                    isAiSuggestionLoading = false
+                }
+            }
+        } catch {
+            DispatchQueue.main.async {
+                withAnimation {
+                    isAiSuggestionLoading = false
+                }
+            }
+        }
+    }
+    
+    func headingText(_ text: String) -> some View {
+        Text(text)
+            .frame(width: containerWidth, alignment: .leading)
+            .font(.system(size: 25, weight: .bold))
+            .padding(.vertical, 14)
+    }
+    
+    func aiSuggestionPlaceholder(height: CGFloat) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            LoadingPlaceholder()
+                .frame(width: containerWidth, height: height)
+                .clipShape(RoundedRectangle(cornerRadius: 5))
+            
+            LoadingPlaceholder()
+                .frame(width: containerWidth - 70, height: height)
+                .clipShape(RoundedRectangle(cornerRadius: 5))
+            
+            LoadingPlaceholder()
+                .frame(width: containerWidth - 70, height: height)
+                .clipShape(RoundedRectangle(cornerRadius: 5))
+            
+            LoadingPlaceholder()
+                .frame(width: containerWidth - 140, height: height)
+                .clipShape(RoundedRectangle(cornerRadius: 5))
+            
+            LoadingPlaceholder()
+                .frame(width: containerWidth - 210, height: height)
+                .clipShape(RoundedRectangle(cornerRadius: 5))
+        }
+        .padding(.bottom, 30)
     }
 }
 
