@@ -46,6 +46,7 @@
 		CAD64C6D2CB2A75900DEF8D1 /* TeaDiseaseHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD64C6C2CB2A75900DEF8D1 /* TeaDiseaseHistoryView.swift */; };
 		CAD64C6F2CB3A24500DEF8D1 /* TeaDiseaseHistoryCardPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD64C6E2CB3A24500DEF8D1 /* TeaDiseaseHistoryCardPlaceholder.swift */; };
 		CAD64C742CB932F200DEF8D1 /* HistoryLimitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD64C732CB932F200DEF8D1 /* HistoryLimitManager.swift */; };
+		CAD9F3562D7D9BDB00386E8A /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = CAD9F3552D7D9BDB00386E8A /* MarkdownUI */; };
 		CADAF5CA2C283E2300A2E12A /* TeaGardenSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADAF5C92C283E2300A2E12A /* TeaGardenSelectorView.swift */; };
 		CADAF5CC2C2842C300A2E12A /* TeaGardenToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADAF5CB2C2842C300A2E12A /* TeaGardenToggle.swift */; };
 		CAE6A1E22C21D984006A64A9 /* AnalysisImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE6A1E12C21D984006A64A9 /* AnalysisImage.swift */; };
@@ -102,6 +103,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA3FC0D42CB98A2E0086E5D9 /* SDWebImageSwiftUI in Frameworks */,
+				CAD9F3562D7D9BDB00386E8A /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,6 +256,7 @@
 			name = TeaGrowthTracker;
 			packageProductDependencies = (
 				CA3FC0D32CB98A2E0086E5D9 /* SDWebImageSwiftUI */,
+				CAD9F3552D7D9BDB00386E8A /* MarkdownUI */,
 			);
 			productName = TeaGrowthTracker;
 			productReference = CA6879272C1DDD38007866DA /* TeaGrowthTracker.app */;
@@ -285,6 +288,7 @@
 			mainGroup = CA68791E2C1DDD38007866DA;
 			packageReferences = (
 				CA3FC0D22CB98A2E0086E5D9 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				CAD9F3542D7D9BDB00386E8A /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 			);
 			productRefGroup = CA6879282C1DDD38007866DA /* Products */;
 			projectDirPath = "";
@@ -576,6 +580,14 @@
 				version = 3.1.1;
 			};
 		};
+		CAD9F3542D7D9BDB00386E8A /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
+			requirement = {
+				kind = exactVersion;
+				version = 2.4.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -583,6 +595,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA3FC0D22CB98A2E0086E5D9 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		CAD9F3552D7D9BDB00386E8A /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CAD9F3542D7D9BDB00386E8A /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
