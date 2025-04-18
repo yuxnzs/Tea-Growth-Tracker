@@ -44,7 +44,7 @@ struct TeaLeafAnalysisView: View {
     @State private var hasReachedLimit = false
     @State private var showActionLoading = false
     
-    @State private var isGPT4o = false
+    @State private var isGPT4o = true
     @State private var isGPTSheetPresented = false
     
     let containerWidth = UIScreen.main.bounds.width - 40
