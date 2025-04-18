@@ -12,7 +12,7 @@ struct TeaDiseaseMapView: View {
     @State private var showDiseaseDetail = false
     @State private var overrideColorScheme: ColorScheme?
     @State private var userPosition: MapCameraPosition = .userLocation(fallback: .automatic)
-    @State private var isStandardMap = true
+    @State private var isStandardMap = false
     @State private var isPageAppear = false
     
     var body: some View {
