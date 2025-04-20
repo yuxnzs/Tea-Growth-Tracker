@@ -10,6 +10,7 @@
 		CA086F4B2C27340200F59DE2 /* FullImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA086F4A2C27340100F59DE2 /* FullImageView.swift */; };
 		CA1258992D305860000D7B47 /* DisplayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1258982D305860000D7B47 /* DisplayManager.swift */; };
 		CA2A5B5E2D3037310009002E /* HomepageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2A5B5D2D3037310009002E /* HomepageView.swift */; };
+		CA2E3FAB2DB2BA5D00FF4B0E /* SolvedTeaDisease.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2E3FAA2DB2BA5D00FF4B0E /* SolvedTeaDisease.swift */; };
 		CA34CD312C1E04AA00B4BBD5 /* DataGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA34CD302C1E04AA00B4BBD5 /* DataGrid.swift */; };
 		CA34CD332C1E075A00B4BBD5 /* DataCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA34CD322C1E075A00B4BBD5 /* DataCard.swift */; };
 		CA36A5B42D47A95300A44C47 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA36A5B32D47A95300A44C47 /* LocationManager.swift */; };
@@ -56,6 +57,7 @@
 		CA086F4A2C27340100F59DE2 /* FullImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullImageView.swift; sourceTree = "<group>"; };
 		CA1258982D305860000D7B47 /* DisplayManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayManager.swift; sourceTree = "<group>"; };
 		CA2A5B5D2D3037310009002E /* HomepageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomepageView.swift; sourceTree = "<group>"; };
+		CA2E3FAA2DB2BA5D00FF4B0E /* SolvedTeaDisease.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolvedTeaDisease.swift; sourceTree = "<group>"; };
 		CA34CD302C1E04AA00B4BBD5 /* DataGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataGrid.swift; sourceTree = "<group>"; };
 		CA34CD322C1E075A00B4BBD5 /* DataCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCard.swift; sourceTree = "<group>"; };
 		CA36A5B32D47A95300A44C47 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				CAA3F9222D7C5DC50091CA15 /* WeatherModel.swift */,
 				CA448A132C2033140065EFE1 /* TeaModel.swift */,
 				CAD64C6A2CB2A07E00DEF8D1 /* TeaDiseaseModel.swift */,
+				CA2E3FAA2DB2BA5D00FF4B0E /* SolvedTeaDisease.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -350,6 +353,7 @@
 				CAA3F9252D7C60C60091CA15 /* WeatherService.swift in Sources */,
 				CA4AC5CC2C218FCC0096D81B /* AnalysisView.swift in Sources */,
 				CA68792D2C1DDD38007866DA /* ContentView.swift in Sources */,
+				CA2E3FAB2DB2BA5D00FF4B0E /* SolvedTeaDisease.swift in Sources */,
 				CA34CD332C1E075A00B4BBD5 /* DataCard.swift in Sources */,
 				CA68792B2C1DDD38007866DA /* TeaGrowthTrackerApp.swift in Sources */,
 				CAE6A1E22C21D984006A64A9 /* AnalysisImage.swift in Sources */,
