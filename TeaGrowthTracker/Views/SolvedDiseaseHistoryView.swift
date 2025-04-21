@@ -1,52 +1,36 @@
 import SwiftUI
 import SwiftData
 
-// 定義 Alert 類型
-enum HistoryAlert: Identifiable {
-    case delete, solved, deleteError, moveError, reachLimit
-    var id: Self { self } // 實作 Identifiable protocol
-}
-
-struct TeaDiseaseHistoryView: View {
+struct SolvedDiseaseHistoryView: View {
     // 從 SwiftData 取得儲存的茶葉分析資料
     @Environment(\.modelContext) private var modelContext
-    // 取得目前顏色模式
-    @Environment(\.colorScheme) var colorScheme
     
     @EnvironmentObject var historyLimitManager: HistoryLimitManager
     @EnvironmentObject var displayManager: DisplayManager
     
-    @State private var diseases: [TeaDisease] = []
+    @State private var diseases: [SolvedTeaDisease] = []
     @State private var isLoadingMoreData = false
     
     @State private var activeAlert: HistoryAlert?
-    @State private var selectedDisease: TeaDisease? // 暫存選中要刪除的 disease
+    @State private var selectedDisease: SolvedTeaDisease? // 暫存選中要刪除的 disease
     @State private var selectedDiseaseIndex: Int?
     
-    @State private var pushToSolvedPage = false
-    
-    // 病害分析頁面離開後，透過底部導航列再進入時需重載資料
-    let needReloadData: Bool
-    
-    let showTabBar: Bool
     // 避免底部導航列遮擋內容
     let bottomPadding: CGFloat
     
     // 離線模式不需要傳入參數
-    init(bottomPadding: CGFloat = 10, showTabBar: Bool = false, needReloadData: Bool = false) {
+    init(bottomPadding: CGFloat = 10) {
         self.bottomPadding = bottomPadding
-        self.showTabBar = showTabBar
-        self.needReloadData = needReloadData
     }
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 // 沒有資料
-                if historyLimitManager.currentHistoryCount == 0 {
+                if historyLimitManager.currentSolvedHistoryCount == 0 {
                     VStack {
                         Spacer().frame(height: 40)
-                        Text("目前沒有分析紀錄")
+                        Text("目前沒有已解決紀錄")
                             .font(.system(size: 18))
                             .foregroundColor(.secondary)
                     }
@@ -56,7 +40,7 @@ struct TeaDiseaseHistoryView: View {
                     historyLimitRow()
                     
                     ForEach(0..<5) { _ in
-                        TeaDiseaseHistoryCardPlaceholder()
+                        TeaDiseaseHistoryCardPlaceholder(isSolvedPage: .constant(true))
                             .padding(.bottom, 10)
                     }
                 } else {
@@ -65,9 +49,9 @@ struct TeaDiseaseHistoryView: View {
                     
                     DiseaseCardList(
                         teaDiseases: diseases,
-                        buttonSystemName: "checkmark", // 已解決按鈕
+                        buttonSystemName: "bandage", // 將資料移到病害頁面按鈕
                         buttonAction: { disease, index in
-                            if historyLimitManager.hasReachedSolvedLimit() {
+                            if historyLimitManager.hasReachedLimit() {
                                 activeAlert = .reachLimit
                                 return
                             }
@@ -93,7 +77,7 @@ struct TeaDiseaseHistoryView: View {
                         Color.clear
                             .onAppear {
                                 let pageSize = 10
-                                let totalCount = historyLimitManager.currentHistoryCount
+                                let totalCount = historyLimitManager.currentSolvedHistoryCount
                                 let currentCount = diseases.count
                                 
                                 // 確定還有更多資料
@@ -105,7 +89,7 @@ struct TeaDiseaseHistoryView: View {
                                     
                                     // 延遲一秒再載入更多資料，避免沒看到 ProgressView 就載入完畢
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                                        loadDiseaseHistory(skipDelay: true)
+                                        loadSolvedHistory(skipDelay: true)
                                     }
                                 }
                             }
@@ -121,19 +105,19 @@ struct TeaDiseaseHistoryView: View {
                         primaryButton: .destructive(Text("刪除")) {
                             if let disease = selectedDisease,
                                let index = selectedDiseaseIndex {
-                                performDelete(disease: disease, index: index)
+                                performDeleteSolved(disease: disease, index: index)
                             }
                         },
                         secondaryButton: .cancel(Text("取消"))
                     )
                 case .solved:
                     return Alert(
-                        title: Text("確定要將此紀錄標記為已解決嗎？"),
-                        message: Text("這會將此筆紀錄移至已解決頁面"),
-                        primaryButton: .default(Text("移至已解決")) {
+                        title: Text("確定要移回病害頁面嗎？"),
+                        message: Text("這會將此筆紀錄移回病害頁面"),
+                        primaryButton: .default(Text("移回病害頁面")) {
                             if let disease = selectedDisease,
                                let index = selectedDiseaseIndex {
-                                markAsSolved(disease: disease, index: index)
+                                markAsUnsolved(disease: disease, index: index)
                             }
                         },
                         secondaryButton: .cancel(Text("取消"))
@@ -148,65 +132,29 @@ struct TeaDiseaseHistoryView: View {
                                  dismissButton: .default(Text("確定")))
                     
                 case .reachLimit:
-                    return Alert(title: Text("已解決紀錄已達儲存上限"),
+                    return Alert(title: Text("病害紀錄已達儲存上限"),
                                  message: Text("請刪除一些紀錄再試一次"),
                                  dismissButton: .default(Text("確定")))
                 }
             }
             .onAppear {
-                // 進入頁面時或有新的分析紀錄時載入資料
-                if diseases.isEmpty || displayManager.hasNewDiseaseData || displayManager.needReloadHistoryPage {
-                    diseases.removeAll()
-                    loadDiseaseHistory()
-                }
+                // 進入頁面時，載入資料（每次離開時頁面被銷毀，因此不用 if 判斷是否需要重載）
+                loadSolvedHistory()
             }
-            .onAppear {
-                if showTabBar {
-                    withAnimation {
-                        displayManager.isShowingTabBar = true
-                    }
-                } else {
-                    withAnimation {
-                        displayManager.isShowingTabBar = false
-                    }
-                }
-            }
-            // 從茶葉分析頁面中進入（已達儲存上限）並離開後，需要重新載入資料
-            .onDisappear {
-                if needReloadData {
-                    displayManager.needReloadHistoryPage = true
-                }
-            }
-            .navigationTitle("茶葉病害分析紀錄")
+            .navigationTitle("已解決病害紀錄")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        pushToSolvedPage = true
-                    } label: {
-                        Image(systemName: "checkmark.circle")
-                            .foregroundStyle(colorScheme == .dark ? .white : .black)
-                    }
-                }
-            }
-            .navigationDestination(isPresented: $pushToSolvedPage) {
-                SolvedDiseaseHistoryView(bottomPadding: bottomPadding)
-                    .environmentObject(historyLimitManager)
-                    .environmentObject(displayManager)
-            }
         }
     }
     
     // 確保在主執行緒執行
     @MainActor
-    func loadDiseaseHistory(skipDelay: Bool = false) {
-        guard !isLoadingMoreData else { return }
+    func loadSolvedHistory(skipDelay: Bool = false) {
         let startTime = Date()
         
         // 使用 Task 避免進入此頁前 UI 卡住
         Task {
             do {
-                var descriptor = FetchDescriptor<TeaDisease>(
+                var descriptor = FetchDescriptor<SolvedTeaDisease>(
                     // 從最新的資料開始載入
                     sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
                 )
@@ -231,8 +179,6 @@ struct TeaDiseaseHistoryView: View {
                     }
                 }
                 
-                displayManager.hasNewDiseaseData = false
-                displayManager.needReloadHistoryPage = false
                 isLoadingMoreData = false
             } catch {
                 print("載入資料失敗：\(error)")
@@ -242,31 +188,36 @@ struct TeaDiseaseHistoryView: View {
     }
     
     @MainActor
-    func performDelete(disease: TeaDisease, index: Int) {
+    func performDeleteSolved(disease: SolvedTeaDisease, index: Int) {
         modelContext.delete(disease)
         do {
             try modelContext.save()
             withAnimation { _ = diseases.remove(at: index) }
-            historyLimitManager.decrementCount()
-            displayManager.needReloadMap = true
+            historyLimitManager.decrementSolvedCount()
         } catch {
             activeAlert = .deleteError
         }
     }
     
+    // 將選中的紀錄移回 TeaDisease
     @MainActor
-    func markAsSolved(disease: TeaDisease, index: Int) {
-        // 將選中的病害資料移至 SolvedTeaDisease
-        let solvedDisease = SolvedTeaDisease(teaDisease: disease)
-        modelContext.insert(solvedDisease) // 插入至已解決
+    func markAsUnsolved(disease: SolvedTeaDisease, index: Int) {
+        let back = TeaDisease(
+            teaImage: disease.teaImage,
+            diseaseName: disease.diseaseName,
+            confidenceLevel: disease.confidenceLevel,
+            longitude: disease.longitude,
+            latitude: disease.latitude
+        )
+        modelContext.insert(back) // 移回病害頁面
         modelContext.delete(disease) // 刪除現有的病害紀錄
         
         do {
             try modelContext.save()
             withAnimation { _ = diseases.remove(at: index) }
-            historyLimitManager.decrementCount()
-            historyLimitManager.incrementSolvedCount()
-            displayManager.needReloadMap = true
+            historyLimitManager.decrementSolvedCount()
+            historyLimitManager.incrementCount()
+            displayManager.needReloadHistoryPage = true
         } catch {
             activeAlert = .moveError
         }
@@ -274,14 +225,14 @@ struct TeaDiseaseHistoryView: View {
     
     func historyLimitRow() -> some View {
         HStack(alignment: .bottom, spacing: 5) {
-            Image(systemName: historyLimitManager.hasReachedLimit()
+            Image(systemName: historyLimitManager.hasReachedSolvedLimit()
                   ? "tray.full"
                   : "tray")
             .font(.system(size: 17))
             .foregroundStyle(.secondary)
             
             // 格式：目前數量 / 上限，例如 1 / 20
-            Text("\(historyLimitManager.currentHistoryCount) / \(historyLimitManager.historyLimit)")
+            Text("\(historyLimitManager.currentSolvedHistoryCount) / \(historyLimitManager.historyLimit)")
                 .font(.system(size: 15))
                 .foregroundStyle(.secondary)
         }

@@ -10,6 +10,8 @@
 		CA086F4B2C27340200F59DE2 /* FullImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA086F4A2C27340100F59DE2 /* FullImageView.swift */; };
 		CA1258992D305860000D7B47 /* DisplayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1258982D305860000D7B47 /* DisplayManager.swift */; };
 		CA2A5B5E2D3037310009002E /* HomepageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2A5B5D2D3037310009002E /* HomepageView.swift */; };
+		CA2C3A482DB50BD600D3F1FE /* DiseaseCardList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2C3A472DB50BD600D3F1FE /* DiseaseCardList.swift */; };
+		CA2C3A4A2DB5101500D3F1FE /* SolvedDiseaseHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2C3A492DB5101500D3F1FE /* SolvedDiseaseHistoryView.swift */; };
 		CA2E3FAB2DB2BA5D00FF4B0E /* SolvedTeaDisease.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2E3FAA2DB2BA5D00FF4B0E /* SolvedTeaDisease.swift */; };
 		CA34CD312C1E04AA00B4BBD5 /* DataGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA34CD302C1E04AA00B4BBD5 /* DataGrid.swift */; };
 		CA34CD332C1E075A00B4BBD5 /* DataCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA34CD322C1E075A00B4BBD5 /* DataCard.swift */; };
@@ -57,6 +59,8 @@
 		CA086F4A2C27340100F59DE2 /* FullImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullImageView.swift; sourceTree = "<group>"; };
 		CA1258982D305860000D7B47 /* DisplayManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayManager.swift; sourceTree = "<group>"; };
 		CA2A5B5D2D3037310009002E /* HomepageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomepageView.swift; sourceTree = "<group>"; };
+		CA2C3A472DB50BD600D3F1FE /* DiseaseCardList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiseaseCardList.swift; sourceTree = "<group>"; };
+		CA2C3A492DB5101500D3F1FE /* SolvedDiseaseHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolvedDiseaseHistoryView.swift; sourceTree = "<group>"; };
 		CA2E3FAA2DB2BA5D00FF4B0E /* SolvedTeaDisease.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolvedTeaDisease.swift; sourceTree = "<group>"; };
 		CA34CD302C1E04AA00B4BBD5 /* DataGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataGrid.swift; sourceTree = "<group>"; };
 		CA34CD322C1E075A00B4BBD5 /* DataCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCard.swift; sourceTree = "<group>"; };
@@ -206,6 +210,7 @@
 				CAD64C6C2CB2A75900DEF8D1 /* TeaDiseaseHistoryView.swift */,
 				CA2A5B5D2D3037310009002E /* HomepageView.swift */,
 				CA918F002D48EF8100D62FBE /* TeaDiseaseMapView.swift */,
+				CA2C3A492DB5101500D3F1FE /* SolvedDiseaseHistoryView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -237,6 +242,7 @@
 				CAD64C6E2CB3A24500DEF8D1 /* TeaDiseaseHistoryCardPlaceholder.swift */,
 				CA3FC0D52CBAEDC60086E5D9 /* TeaGardenInfoBar.swift */,
 				CAB944EA2D2D6E1200948B6A /* TeaDiseaseHistoryCardViewController.swift */,
+				CA2C3A472DB50BD600D3F1FE /* DiseaseCardList.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -324,6 +330,7 @@
 				CAD64C6F2CB3A24500DEF8D1 /* TeaDiseaseHistoryCardPlaceholder.swift in Sources */,
 				CABA9EF02CA94E5600773F59 /* PhotoSelectionButton.swift in Sources */,
 				CABA9EEA2CA94DD700773F59 /* TeaLeafInfoRow.swift in Sources */,
+				CA2C3A482DB50BD600D3F1FE /* DiseaseCardList.swift in Sources */,
 				CAA3F9232D7C5DCD0091CA15 /* WeatherModel.swift in Sources */,
 				CAD64C742CB932F200DEF8D1 /* HistoryLimitManager.swift in Sources */,
 				CABA9EF22CA94E8700773F59 /* CameraView.swift in Sources */,
@@ -348,6 +355,7 @@
 				CADAF5CC2C2842C300A2E12A /* TeaGardenToggle.swift in Sources */,
 				CA448A142C2033140065EFE1 /* TeaModel.swift in Sources */,
 				CAD64C6D2CB2A75900DEF8D1 /* TeaDiseaseHistoryView.swift in Sources */,
+				CA2C3A4A2DB5101500D3F1FE /* SolvedDiseaseHistoryView.swift in Sources */,
 				CA1258992D305860000D7B47 /* DisplayManager.swift in Sources */,
 				CA8F06F22D2E9E0F006449FB /* TeaDiseaseHistoryCardRepresentable.swift in Sources */,
 				CAA3F9252D7C60C60091CA15 /* WeatherService.swift in Sources */,
@@ -491,9 +499,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"TeaGrowthTracker/Preview Content\"";
+				DEVELOPMENT_TEAM = FSJ65THAK3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TeaGrowthTracker/Info.plist;
@@ -513,6 +523,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = yuxnzs.TeaGrowthTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -524,9 +535,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"TeaGrowthTracker/Preview Content\"";
+				DEVELOPMENT_TEAM = FSJ65THAK3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TeaGrowthTracker/Info.plist;
@@ -546,6 +559,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = yuxnzs.TeaGrowthTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
