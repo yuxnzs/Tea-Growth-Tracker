@@ -6,7 +6,7 @@ struct TeaGrowthTrackerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [TeaDisease.self])
+                .modelContainer(for: [TeaDisease.self, SolvedTeaDisease.self])
         }
     }
 }
