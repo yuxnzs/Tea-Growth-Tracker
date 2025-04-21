@@ -1,6 +1,12 @@
 import SwiftUI
 
 struct TeaDiseaseHistoryCardPlaceholder: View {
+    @Binding private var isSolvedPage: Bool
+    
+    init(isSolvedPage: Binding<Bool> = .constant(false)) {
+        _isSolvedPage = isSolvedPage
+    }
+    
     var body: some View {
         VStack {
             // 使用縮小後的圖片進行顯示，避免圖片過大造成卡頓
@@ -26,6 +32,19 @@ struct TeaDiseaseHistoryCardPlaceholder: View {
             .background(.ultraThinMaterial)
             .clipShape(Circle())
             .padding(.trailing, 8)
+            .padding(.top, 8)
+        }
+        // 刪除按鈕旁功能按鈕
+        .overlay(alignment: .topTrailing) {
+            Button(action: {}) {
+                Image(systemName: isSolvedPage ? "bandage" : "checkmark")
+                    .frame(width: 20, height: 20)
+                    .foregroundColor(.green)
+            }
+            .padding(7)
+            .background(.ultraThinMaterial)
+            .clipShape(Circle())
+            .padding(.trailing, 55)
             .padding(.top, 8)
         }
         // 底部資訊
