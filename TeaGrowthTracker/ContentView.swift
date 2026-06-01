@@ -31,7 +31,7 @@ struct ContentView: View {
         }
         .overlay {
             if displayManager.showActionLoadingView {
-                ActionLoadingView()
+                ActionLoadingView(useWhiteProgressView: displayManager.useWhiteProgressView)
             }
         }
     }
