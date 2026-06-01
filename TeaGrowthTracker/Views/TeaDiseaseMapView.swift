@@ -14,6 +14,7 @@ struct TeaDiseaseMapView: View {
     @State private var userPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var isStandardMap = false
     @State private var isPageAppear = false
+    @State private var pushToHeatmap = false
     
     var body: some View {
         NavigationStack {
@@ -55,6 +56,13 @@ struct TeaDiseaseMapView: View {
                 MapPitchToggle() // 切換 2D 3D 按鈕
             }
             .mapStyle(isStandardMap ? .standard(pointsOfInterest: .excludingAll) : .imagery(elevation: .realistic))
+            // 進入熱力圖頁面按鈕
+            .overlay(alignment: .bottomTrailing) {
+                mapButton(defaultIcon: "leaf", toggledIcon: "leaf.fill", condition: selectedToggle == 1) {
+                    pushToHeatmap = true
+                }
+                .padding(.bottom, 100)
+            }
             .overlay(alignment: .bottomTrailing) {
                 if !showDiseaseDetail {
                     mapButton(defaultIcon: "photo", toggledIcon: "globe", condition: isStandardMap) {
@@ -106,8 +114,12 @@ struct TeaDiseaseMapView: View {
                     }
                 }
             }
+            .navigationDestination(isPresented: $pushToHeatmap) {
+                HeatmapView()
+            }
             .onAppear {
                 displayManager.showActionLoadingView = true
+                displayManager.useWhiteProgressView = true
                 
                 // 使用 Task 確保不延遲、先進入地圖頁面再載入 Annotations
                 Task { @MainActor in
@@ -142,6 +154,7 @@ struct TeaDiseaseMapView: View {
                 
                 Task { @MainActor in
                     displayManager.showActionLoadingView = false
+                    displayManager.useWhiteProgressView = false
                 }
             }
             .onDisappear {
