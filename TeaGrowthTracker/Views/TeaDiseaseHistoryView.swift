@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import TipKit
 
 // 定義 Alert 類型
 enum HistoryAlert: Identifiable {
@@ -24,6 +25,10 @@ struct TeaDiseaseHistoryView: View {
     @State private var selectedDiseaseIndex: Int?
     
     @State private var pushToSolvedPage = false
+    
+    @State private var teachingTip = TeachingTip()
+    @State private var showTeachingTip = false
+    @State private var tipId = UUID()
     
     // 病害分析頁面離開後，透過底部導航列再進入時需重載資料
     let needReloadData: Bool
@@ -63,6 +68,17 @@ struct TeaDiseaseHistoryView: View {
                     // 目前儲存的紀錄數量和上限
                     historyLimitRow()
                     
+                    if showTeachingTip {
+                        CustomTipView(title: "教學提示", message: "你可以點擊左側的 ✅ 圖示來標記紀錄為已解決，或是右側按鈕刪除紀錄。") {
+                            withAnimation {
+                                showTeachingTip = false
+                            }
+                        }
+                        .padding(.horizontal, 18)
+                        .padding(.bottom, 10)
+                        .animation(.easeInOut, value: showTeachingTip)
+                    }
+                    
                     DiseaseCardList(
                         teaDiseases: diseases,
                         buttonSystemName: "checkmark", // 已解決按鈕
@@ -92,14 +108,15 @@ struct TeaDiseaseHistoryView: View {
                     LazyVStack {
                         Color.clear
                             .onAppear {
-                                let pageSize = 10
+                                //                                let pageSize = 10
                                 let totalCount = historyLimitManager.currentHistoryCount
                                 let currentCount = diseases.count
                                 
                                 // 確定還有更多資料
                                 let hasMore = currentCount < totalCount
                                 // 確定目前的資料數量是完整的一頁
-                                let isFullPage = currentCount > 0 && currentCount % pageSize == 0
+                                // && currentCount % pageSize == 0
+                                let isFullPage = currentCount > 0
                                 if !isLoadingMoreData && hasMore && isFullPage {
                                     isLoadingMoreData = true // 顯示 ProgressView
                                     
@@ -180,6 +197,18 @@ struct TeaDiseaseHistoryView: View {
             .navigationTitle("茶葉病害分析紀錄")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        // 顯示教學提示
+                        withAnimation {
+                            showTeachingTip.toggle()
+                        }
+                    } label: {
+                        Image(systemName: "questionmark.circle")
+                            .foregroundStyle(colorScheme == .dark ? .white : .black)
+                    }
+                }
+                
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         pushToSolvedPage = true
@@ -200,7 +229,6 @@ struct TeaDiseaseHistoryView: View {
     // 確保在主執行緒執行
     @MainActor
     func loadDiseaseHistory(skipDelay: Bool = false) {
-        guard !isLoadingMoreData else { return }
         let startTime = Date()
         
         // 使用 Task 避免進入此頁前 UI 卡住
