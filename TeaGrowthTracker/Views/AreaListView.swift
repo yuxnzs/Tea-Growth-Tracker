@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct AreaListView: View {
+    @AppStorage("selectedToggle") var selectedToggle: Int = 1
     @EnvironmentObject var teaService: TeaService
     @EnvironmentObject var displayManager: DisplayManager
     
@@ -11,6 +12,8 @@ struct AreaListView: View {
             }
         }, by: { $0.0.date })
     }
+    
+    let teaGardenImage: [UIImage] = [UIImage(named: "綠山茶園")!, UIImage(named: "春嶺茶園")!, UIImage(named: "碧谷茶園")!, UIImage(named: "翠溪茶園")!]
     
     var body: some View {
         NavigationStack {
@@ -56,6 +59,21 @@ struct AreaListView: View {
                             }
                         }
                     }
+                }
+                
+                Section(header: Text("茶園分區標記")) {
+                    NavigationLink {
+                        FullImageView(
+                            selectedTab: .constant(0),
+                            isAnalysisView: false,
+                            asyncImages: nil,
+                            useUIImage: true,
+                            uiImage: teaGardenImage[selectedToggle - 1]
+                        )
+                    } label: {
+                        Text("茶園分區圖")
+                    }
+                    
                 }
             }
             .onAppear {
