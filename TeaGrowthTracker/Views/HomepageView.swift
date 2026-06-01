@@ -53,7 +53,7 @@ struct HomepageView: View {
                     // 取得資料時顯示載入中
                     if isLoading {
                         VStack {
-                            LoadingView(isOfflineModeEnabled: $isOfflineModeEnabled)
+                            LoadingView(isOfflineModeEnabled: .constant(false))
                                 .onAppear {
                                     // 若是離線模式就不用取得資料
                                     if !isOfflineModeEnabled {
@@ -70,8 +70,8 @@ struct HomepageView: View {
                     } else {
                         ScrollView {
                             TeaGardenInfoBar(
-                                teaGardenName: teaService.teaGardenData.last!.name,
-                                teaGardenLocation: teaService.teaGardenData.last!.location,
+                                teaGardenName: teaService.teaGardenData.last?.name ?? "--",
+                                teaGardenLocation: teaService.teaGardenData.last?.location ?? "--",
                                 isPlaceholder: true
                             )
                             .padding(.bottom, 7)
@@ -91,7 +91,7 @@ struct HomepageView: View {
                                     DataGrid(
                                         titles: ["天氣情況", "溫度", "濕度", "風速"],
                                         values: [
-                                            "\(weatherData?.weatherCondition ?? "未知")",
+                                            "\(weatherData?.weatherCondition ?? "--")",
                                             "\(weatherData?.temperature ?? "--") °C",
                                             "\(weatherData?.humidity ?? "--") %",
                                             "\(weatherData?.windSpeed ?? "--") m/s"
@@ -100,56 +100,58 @@ struct HomepageView: View {
                                     .padding(.horizontal, 20)
                                 }
                                 
-                                // 歷史分析結果
-                                VStack {
-                                    NavigationLink {
-                                        AreaListView()
-                                            .environmentObject(teaService)
-                                            .environmentObject(displayManager)
-                                    } label: {
-                                        HStack {
-                                            Text("歷史分析結果")
-                                                .font(.system(size: 25))
-                                                .fontWeight(.bold)
-                                            
-                                            Spacer()
-                                            
-                                            Image(systemName: "arrow.right")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 20, height: 20)
-                                                .foregroundStyle(.gray)
-                                        }
-                                    }
-                                    .padding(.horizontal, 20)
-                                    .buttonStyle(.plain)
-                                    
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        HStack {
-                                            // teaService.teaModel 是一個陣列，所以要用 flatMap 來取得一個元素
-                                            // 再透過該元素取得 teaData 陣列
-                                            // teaService.teaModel.compactMap 的 $0 為一個 TeaModel 物件
-                                            // first 取得 A 區
-                                            ForEach(teaService.teaGardenData.compactMap { $0.teaData.prefix(3).first }.reversed()) { teaData in
-                                                RecentAnalysisPreview(teaData: teaData)
-                                                    .padding(.trailing, 15)
-                                                // 傳 teaData 的前三項分析資料給 RecentAnalysisPreview 顯示
-                                                    .onTapGesture {
-                                                        selectedTeaData = teaData
-                                                    }
-                                                // 使用 isPresented 來控制 sheet 顯示
-                                                // 會因為狀態同步問題導致顯示錯誤的數據
-                                                // 所以改用 item，因為 item 綁定的是具體的數據物件
-                                                // item 有值時顯示
-                                                    .sheet(item: $selectedTeaData) { teaData in
-                                                        AnalysisView(teaData: teaData, isSheet: true)
-                                                    }
+                                if !isOfflineModeEnabled {
+                                    // 歷史分析結果
+                                    VStack {
+                                        NavigationLink {
+                                            AreaListView()
+                                                .environmentObject(teaService)
+                                                .environmentObject(displayManager)
+                                        } label: {
+                                            HStack {
+                                                Text("生長情形分析紀錄")
+                                                    .font(.system(size: 25))
+                                                    .fontWeight(.bold)
+                                                
+                                                Spacer()
+                                                
+                                                Image(systemName: "arrow.right")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 20, height: 20)
+                                                    .foregroundStyle(.gray)
                                             }
                                         }
-                                        .padding(.leading, 20)
+                                        .padding(.horizontal, 20)
+                                        .buttonStyle(.plain)
+                                        
+                                        ScrollView(.horizontal, showsIndicators: false) {
+                                            HStack {
+                                                // teaService.teaModel 是一個陣列，所以要用 flatMap 來取得一個元素
+                                                // 再透過該元素取得 teaData 陣列
+                                                // teaService.teaModel.compactMap 的 $0 為一個 TeaModel 物件
+                                                // first 取得 A 區
+                                                ForEach(teaService.teaGardenData.compactMap { $0.teaData.prefix(3).first }.reversed()) { teaData in
+                                                    RecentAnalysisPreview(teaData: teaData)
+                                                        .padding(.trailing, 15)
+                                                    // 傳 teaData 的前三項分析資料給 RecentAnalysisPreview 顯示
+                                                        .onTapGesture {
+                                                            selectedTeaData = teaData
+                                                        }
+                                                    // 使用 isPresented 來控制 sheet 顯示
+                                                    // 會因為狀態同步問題導致顯示錯誤的數據
+                                                    // 所以改用 item，因為 item 綁定的是具體的數據物件
+                                                    // item 有值時顯示
+                                                        .sheet(item: $selectedTeaData) { teaData in
+                                                            AnalysisView(teaData: teaData, isSheet: true)
+                                                        }
+                                                }
+                                            }
+                                            .padding(.leading, 20)
+                                        }
                                     }
+                                    .padding(.bottom, bottomPadding)
                                 }
-                                .padding(.bottom, bottomPadding)
                             }
                         }
                         .onAppear {
@@ -178,8 +180,8 @@ struct HomepageView: View {
                             photoPickerItem: $photoPickerItem,
                             cameraImage: $cameraImage,
                             showAnalysisPage: $showAnalysisPage,
-                            teaGardenName: teaService.teaGardenData.last!.name,
-                            teaGardenLocation: teaService.teaGardenData.last!.location
+                            teaGardenName: teaService.teaGardenData.last?.name ?? "目前為離線模式",
+                            teaGardenLocation: teaService.teaGardenData.last?.location ?? "--",
                         )
                         .environmentObject(teaService)
                         .environmentObject(displayManager)
@@ -218,6 +220,7 @@ struct HomepageView: View {
                     }
                     Button("進入離線模式") {
                         isOfflineModeEnabled = true
+                        isLoading = false
                     }
                 } message: {
                     Text("伺服器連線錯誤，請稍後再試")
@@ -268,7 +271,6 @@ struct HomepageView: View {
                             }
                     }
                 }
-                .modelContainer(for: [TeaDisease.self])
             }
         }
     }
@@ -288,9 +290,9 @@ struct HomepageView: View {
             let endTime = Date()
             let timeInterval = endTime.timeIntervalSince(startTime)
             
-            // 如果取得資料時間小於 5 秒，繼續等待直到滿 5 秒，避免畫面快速閃爍
-            if !skipDelay && timeInterval < 5 {
-                let remainingTime = 5.0 - timeInterval
+            // 如果取得資料時間小於 3 秒，繼續等待直到滿 3 秒，避免畫面快速閃爍
+            if !skipDelay && timeInterval < 3 {
+                let remainingTime = 3.0 - timeInterval
                 try await Task.sleep(nanoseconds: UInt64(remainingTime * 1_000_000_000)) // 等待剩餘的時間
             }
             
@@ -299,7 +301,7 @@ struct HomepageView: View {
             }
         } catch {
             DispatchQueue.main.async {
-                isLoading = true
+//                isLoading = false
                 isError = true
             }
         }
