@@ -8,6 +8,8 @@ import MarkdownUI
 struct TeaLeafAnalysisView: View {
     // 從 SwiftData 取得儲存的茶葉分析資料
     @Environment(\.modelContext) var modelContext
+    // 取得目前顏色模式
+    @Environment(\.colorScheme) var colorScheme
     
     @EnvironmentObject var historyLimitManager: HistoryLimitManager
     @EnvironmentObject var displayManager: DisplayManager
@@ -44,8 +46,28 @@ struct TeaLeafAnalysisView: View {
     @State private var hasReachedLimit = false
     @State private var showActionLoading = false
     
+    @State private var reportText = ""
+    @State private var showReportSheet = false
+    
     @State private var isGPT4o = true
     @State private var isGPTSheetPresented = false
+    
+    @State private var isSampleResponse = false
+    
+    @State private var sampleResponse = """
+    這次的辨識結果顯示茶葉可能感染了「紅葉斑病」，信心程度為 98.3%。此信心程度表示結果非常可靠。
+    紅葉斑病容易導致葉片出現紅褐色斑點，嚴重會影響茶葉品質與產量。
+
+    根據目前的環境及病害情況，我建議採取以下管理措施：
+
+    1. **農藥建議**：可施用「賓克隆」或「保米多」等台灣合法藥劑，建議在陰雨潮濕過後盡快施用，連續發病時依照建議間隔使用。
+
+    2. **環境數據解讀**：目前濕度高達 94%，溫度適中，這樣的高濕環境容易讓紅葉斑病加劇蔓延，需特別留意。
+
+    3. **病葉處理操作**：建議及時將已經受感染的病葉、落葉修剪清除，集中燒毀或深埋，避免病菌持續蔓延。
+
+    請持續保持良好管理，並時常開啟 App 查看環境數據，讓茶園維持健康狀態！
+    """
     
     let containerWidth = UIScreen.main.bounds.width - 40
     // 病害類別名稱，用來對照模型結果
@@ -72,46 +94,139 @@ struct TeaLeafAnalysisView: View {
                         }
                         .buttonStyle(.plain)
                         .sheet(isPresented: $isGPTSheetPresented) {
-                            Toggle("使用 GPT-4o", isOn: $isGPT4o)
-                                .padding()
-                                .background(Color(.systemGray6))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .padding(.horizontal)
-                                .presentationDetents([.fraction(0.2)])
-                                .presentationDragIndicator(.visible)
+                            VStack(spacing: 8) {
+                                Toggle("使用 GPT-4o", isOn: $isGPT4o)
+                                    .padding()
+                                    .background(Color(.systemGray6))
+                                
+                                Toggle("AI 管理建議", isOn: $isSampleResponse)
+                                    .padding()
+                                    .background(Color(.systemGray6))
+                            }
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .padding(.horizontal)
+                            .presentationDetents([.fraction(0.3)])
+                            .presentationDragIndicator(.visible)
                         }
                         
-                        TeaLeafInfoRow(
-                            isImageError: isImageError,
-                            isResultError: isResultError,
-                            iconName: "info.circle",
-                            title: "預測病害",
-                            content: predictionResult,
-                            containerWidth: containerWidth
-                        )
+                        HStack {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("預測病害")
+                                    .font(.system(size: 16))
+                                    .foregroundColor(.gray)
+                                
+                                // 病害名稱
+                                if let predictionResult = predictionResult {
+                                    Text(predictionResult)
+                                        .font(.system(size: 23))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundStyle(colorScheme == .dark ?
+                                                         Color(red: 0.30, green: 0.60, blue: 0.40) : // 深色模式使用更淡的綠色
+                                                         Color("ThemeColor"))
+                                } else {
+                                    LoadingPlaceholder()
+                                        .frame(width: 105, height: 27.5)
+                                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            if let confidence = confidence {
+                                CircularProgressView(percentage: confidence)
+                                    .padding(.trailing, 7)
+                            } else {
+                                Color.clear
+                                    .frame(width: (containerWidth - 16) / 2)
+                            }
+                        }
+                        .padding(.horizontal, 28)
+                        .frame(maxWidth: containerWidth)
+                        .frame(height: 150)
+                        .background(Color(.systemGray6))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .padding(.horizontal)
+                        .padding(.bottom, 15)
+                        .fontWeight(.bold)
                         
                         // 有錯誤就不顯示
                         if !isImageError && !isResultError {
-                            TeaLeafInfoRow(
-                                isImageError: isImageError,
-                                isResultError: isResultError,
-                                iconName: "waveform.path.ecg",
-                                title: "信心程度",
-                                content: confidence.map { "\(String(format: "%.2f", $0))%" },
-                                containerWidth: containerWidth
-                            )
+                            //                            TeaLeafInfoRow(
+                            //                                isImageError: isImageError,
+                            //                                isResultError: isResultError,
+                            //                                iconName: "waveform.path.ecg",
+                            //                                title: "信心程度",
+                            //                                content: confidence.map { "\(String(format: "%.2f", $0))%" },
+                            //                                containerWidth: containerWidth
+                            //                            )
                             
                             // AI 管理建議
                             if showAiSuggestion {
                                 headingText("AI 管理建議 ✨")
                                 if isAiSuggestionLoading {
-                                    aiSuggestionPlaceholder(height: 23)
+                                    if !isSampleResponse {
+                                        aiSuggestionPlaceholder(height: 23)
+                                    } else {
+                                        Markdown(sampleResponse)
+                                            .font(.system(size: 20))
+                                            .frame(width: containerWidth, alignment: .leading)
+                                            .padding(.bottom, 15)
+                                            .textSelection(.enabled)
+                                        
+                                        Button {
+                                            showReportSheet = true
+                                        } label: {
+                                            VStack {
+                                                Text("AI 建議僅供參考，請依據實際情況進行管理。")
+                                                    .padding(.bottom, 2)
+                                                
+                                                Button {
+                                                    showReportSheet = true
+                                                } label: {
+                                                    Text("回報 AI 問題")
+                                                }
+                                                .foregroundColor(.blue)
+                                            }
+                                        }
+                                        .font(.system(size: 13))
+                                        .foregroundColor(.gray)
+                                        .padding(.bottom, 20)
+                                    }
                                 } else {
-                                    Markdown(aiSuggestion ?? "無法取得 AI 建議，請稍後再試。")
-                                        .font(.system(size: 20))
-                                        .frame(width: containerWidth, alignment: .leading)
-                                        .padding(.bottom, 28)
-                                        .textSelection(.enabled)
+                                    if !isSampleResponse {
+                                        Markdown(aiSuggestion ?? "無法取得 AI 建議，請稍後再試。")
+                                            .font(.system(size: 20))
+                                            .frame(width: containerWidth, alignment: .leading)
+                                            .padding(.bottom, 15)
+                                            .textSelection(.enabled)
+                                    } else {
+                                        Markdown(sampleResponse)
+                                            .font(.system(size: 20))
+                                            .frame(width: containerWidth, alignment: .leading)
+                                            .padding(.bottom, 15)
+                                            .textSelection(.enabled)
+                                    }
+                                    
+                                    if isSampleResponse || aiSuggestion != nil {
+                                        Button {
+                                            showReportSheet = true
+                                        } label: {
+                                            VStack {
+                                                Text("AI 建議僅供參考，請依據實際情況進行管理。")
+                                                    .padding(.bottom, 2)
+                                                
+                                                Button {
+                                                    showReportSheet = true
+                                                } label: {
+                                                    Text("回報 AI 問題")
+                                                }
+                                                .foregroundColor(.blue)
+                                            }
+                                        }
+                                        .font(.system(size: 13))
+                                        .foregroundColor(.gray)
+                                        .padding(.bottom, 20)
+                                    }
                                 }
                             }
                         } else {
@@ -130,7 +245,7 @@ struct TeaLeafAnalysisView: View {
                                     }
                                     await fetchAiSuggestion(
                                         diseaseName: predictionResult ?? "",
-                                        confidenceLevel: confidence.map { String(format: "%.2f", $0) } ?? "0.00"
+                                        confidenceLevel: confidence.map { String(format: "%.1f", $0) } ?? "0.00"
                                     )
                                 }
                             } label: {
@@ -216,6 +331,27 @@ struct TeaLeafAnalysisView: View {
                 }
                 .onAppear {
                     loadImageFromUser()
+                }
+                .sheet(isPresented: $showReportSheet) {
+                    VStack(spacing: 20) {
+                        Text("請輸入要回報的內容")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        
+                        TextField("輸入內容", text: $reportText)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(.horizontal)
+                        
+                        Button("送出") {
+                            print("送出的內容：\(reportText)")
+                            showReportSheet = false
+                            reportText = ""
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding()
+                    .presentationDetents([.fraction(0.3)])
+                    .presentationDragIndicator(.visible)
                 }
                 .alert(isPresented: $showFetchingLocationAlert) {
                     Alert(
@@ -359,7 +495,6 @@ struct TeaLeafAnalysisView: View {
                         isFetchingLocation = false
                         isLocationFetchSuccessful = true
                     } else {
-                        print("沒有 GPS EXIF 或解析失敗")
                         // 避免位置為 nil 時，繼續使用上次的位置
                         longitude = nil
                         latitude = nil
@@ -508,7 +643,7 @@ struct TeaLeafAnalysisView: View {
                 }
                 return
             }
-                
+            
             DispatchQueue.main.async {
                 withAnimation {
                     aiSuggestion = String(data: data, encoding: .utf8)
